@@ -1,4 +1,5 @@
--cp src
--cp examples
--main vdom.examples.Main
--js bin/examples.js
+# Examples
+-main examples.basic.Main
+-js examples/basic/main.js
+
+# Tests
