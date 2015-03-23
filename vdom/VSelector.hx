@@ -4,7 +4,7 @@ class VSelector {
   public var tag(default, null) : String;
   public var props(default, null) : VProps;
 
-  public static function parse(?selector : String, ?props : Dynamic) : VSelector {
+  public static function parse(?selector : String, ?props : VProps) : VSelector {
     if (props == null)
       props = {};
 
@@ -12,8 +12,8 @@ class VSelector {
       return new VSelector('div', props);
     }
 
-    props.id = 'test';
-    props.className = 'test1 test2';
+    //props.set("id", "test");
+    //props.set("className", "test1 test2");
     return new VSelector('div', props);
   }
 
