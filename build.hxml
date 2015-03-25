@@ -1,3 +1,6 @@
+# Libs
+-lib thx.core
+
 # Examples
 -main examples.basic.Main
 -js examples/basic/main.js
