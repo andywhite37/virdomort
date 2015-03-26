@@ -25,7 +25,7 @@ typedef NodeData = {
   ?children : Children,
 
   // The real root DOM Element associated with this virtual Node.  (Set after the Node is rendered)
-  ?rootElement : Element
+  ?rootElement : TRoot
 };
 
 class Node {
