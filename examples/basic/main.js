@@ -46,7 +46,7 @@ examples_basic_Main.main = function() {
 		};
 		$r = _g1;
 		return $r;
-	}(this))},vdom_Children.Nodes([vdom_Node.v("h1",null,vdom_Children.Text("something"))])));
+	}(this))},vdom_Child.Nodes([vdom_Node.v("h1",null,vdom_Child.Text("something"))])));
 	console.log(node);
 	var root = window.document.getElementById("root");
 	vdom_VDom.append(root,node);
@@ -88,15 +88,15 @@ haxe_ds_StringMap.prototype = {
 		return out;
 	}
 };
-var vdom_Children = { __constructs__ : ["Node","Nodes","Text"] };
-vdom_Children.Node = function(child) { var $x = ["Node",0,child]; $x.__enum__ = vdom_Children; return $x; };
-vdom_Children.Nodes = function(children) { var $x = ["Nodes",1,children]; $x.__enum__ = vdom_Children; return $x; };
-vdom_Children.Text = function(text) { var $x = ["Text",2,text]; $x.__enum__ = vdom_Children; return $x; };
+var vdom_Child = { __constructs__ : ["Node","Nodes","Text"] };
+vdom_Child.Node = function(child) { var $x = ["Node",0,child]; $x.__enum__ = vdom_Child; return $x; };
+vdom_Child.Nodes = function(children) { var $x = ["Nodes",1,children]; $x.__enum__ = vdom_Child; return $x; };
+vdom_Child.Text = function(text) { var $x = ["Text",2,text]; $x.__enum__ = vdom_Child; return $x; };
 var vdom_Diff = function() { };
 vdom_Diff.diff = function(previous,current) {
 	return new vdom_Patch();
 };
-var vdom_Node = function(tag,data,children) {
+var vdom_Node = function(tag,data,child) {
 	if(data == null) data = { };
 	this.data = data;
 	if(tag != null) this.data.tag = tag;
@@ -107,10 +107,10 @@ var vdom_Node = function(tag,data,children) {
 	if(this.data.properties == null) this.data.properties = new haxe_ds_StringMap();
 	if(this.data.events == null) this.data.events = new haxe_ds_StringMap();
 	if(this.data.children == null) this.data.children = [];
-	if(children != null) this.data.children.push(children);
+	if(child != null) this.data.children.push(child);
 };
-vdom_Node.v = function(tag,data,children) {
-	return new vdom_Node(tag,data,children);
+vdom_Node.v = function(tag,data,child) {
+	return new vdom_Node(tag,data,child);
 };
 vdom_Node.prototype = {
 	tag: function(tag) {
@@ -156,6 +156,16 @@ vdom_Node.prototype = {
 		this.data.attributes.set(name,value);
 		return this;
 	}
+	,attrs: function(attributes) {
+		var $it0 = attributes.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			var value;
+			value = __map_reserved[key] != null?attributes.getReserved(key):attributes.h[key];
+			this.data.attributes.set(key,value);
+		}
+		return this;
+	}
 	,prop: function(name,value) {
 		var value1 = value;
 		this.data.properties.set(name,value1);
@@ -166,15 +176,15 @@ vdom_Node.prototype = {
 		return this;
 	}
 	,child: function(node) {
-		this.data.children.push(vdom_Children.Node(node));
+		this.data.children.push(vdom_Child.Node(node));
 		return this;
 	}
 	,children: function(nodes) {
-		this.data.children.push(vdom_Children.Nodes(nodes));
+		this.data.children.push(vdom_Child.Nodes(nodes));
 		return this;
 	}
 	,text: function(text) {
-		this.data.children.push(vdom_Children.Text(text));
+		this.data.children.push(vdom_Child.Text(text));
 		return this;
 	}
 };

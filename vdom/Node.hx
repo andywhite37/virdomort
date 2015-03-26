@@ -2,7 +2,14 @@ package vdom;
 
 import js.html.Element;
 import haxe.Json;
-import haxe.ds.StringMap;
+
+typedef Classes = Array<String>;
+typedef StyleMap = Map<String, String>;
+typedef AttributeMap = Map<String, String>;
+typedef PropertyMap = Map<String, Dynamic>;
+typedef EventHandler = Dynamic -> Void;
+typedef EventHandlerMap = Map<String, EventHandler>;
+typedef Children = Array<Child>;
 
 typedef NodeData = {
   // Virtual Node properties
@@ -10,12 +17,12 @@ typedef NodeData = {
   ?id : String,
   ?key : String,
   ?namespace : String,
-  ?classes : Array<String>,
-  ?styles : Map<String, String>,
-  ?attributes : Map<String, String>,
-  ?properties : Map<String, Dynamic>, // This is Dynamic, because DOM element properties are not constrained to specific types
-  ?events : Map<String, Dynamic -> Void>, // This is Dynamic, because event handlers have different types of arguments (Haxe itself does this too)
-  ?children : Array<Children>,
+  ?classes : Classes,
+  ?styles : StyleMap,
+  ?attributes : AttributeMap,
+  ?properties : PropertyMap, // This is Dynamic, because DOM element properties are not constrained to specific types
+  ?events : EventHandlerMap, // This is Dynamic, because event handlers have different types of arguments (Haxe itself does this too)
+  ?children : Children,
 
   // The real root DOM Element associated with this virtual Node.  (Set after the Node is rendered)
   ?rootElement : Element
@@ -29,14 +36,14 @@ class Node {
   /**
    * Factory function (shortcut) for creating a virtual Node
    */
-  public static function v(?tag : String, ?data : NodeData, ?children : Children) : Node {
-    return new Node(tag, data, children);
+  public static function v(?tag : String, ?data : NodeData, ?child : Child) : Node {
+    return new Node(tag, data, child);
   }
 
   /**
    * Constructor for a virtual Node.  See also the static `v` factory function.
    */
-  public function new(?tag : String, ?data : NodeData, ?children : Children) {
+  public function new(?tag : String, ?data : NodeData, ?child: Child) {
     if (data == null)
       data = {};
 
@@ -49,25 +56,25 @@ class Node {
       this.data.tag = "div";
 
     if (this.data.classes == null)
-      this.data.classes = new Array<String>();
+      this.data.classes = new Classes();
 
     if (this.data.styles == null)
-      this.data.styles = new Map<String, String>();
+      this.data.styles = new StyleMap();
 
     if (this.data.attributes == null)
-      this.data.attributes = new Map<String, String>();
+      this.data.attributes = new AttributeMap();
 
     if (this.data.properties == null)
-      this.data.properties = new Map<String, Dynamic>();
+      this.data.properties = new PropertyMap();
 
     if (this.data.events == null)
-      this.data.events = new Map<String, Dynamic -> Void>();
+      this.data.events = new EventHandlerMap();
 
     if (this.data.children == null)
-      this.data.children = new Array<Children>();
+      this.data.children = new Children();
 
-    if (children != null)
-      this.data.children.push(children);
+    if (child != null)
+      this.data.children.push(child);
   }
 
   // TODO: maybe move these fluent methods to a separate class
@@ -106,7 +113,8 @@ class Node {
   }
 
   /**
-   * Adds a single class string to this virtual Node
+   * Adds a single class string to this virtual Node.  This does not split the string on whitespace.
+   * Use `cln` to add mutliple classes from a single string.
    */
   public function cl(cl : String) : Node {
     data.classes.push(cl);
@@ -114,7 +122,7 @@ class Node {
   }
 
   /**
-   * Adds an Array of class strings to this virtual Node
+   * Adds an Array of class strings to this virtual Node.
    */
   public function cls(classes : Array<String>) : Node {
     data.classes = data.classes.concat(classes);
@@ -122,14 +130,16 @@ class Node {
   }
 
   /**
-   * Adds multiple classes to this virtual Node (splits on whitespace)
+   * Adds multiple classes from a single string to this virtual Node (split on whitespace).
    */
   public function cln(className : String) : Node {
     return cls(~/[ \t]+/g.split(className));
   }
 
   /**
-   * Adds a class to this virtual node based on a conditional
+   * Adds a class to this virtual node based on a conditional.
+   *
+   * If the conditional is true, the ifTrue class value is added, otherwise the ifFalse value is added.
    */
   public function clc(conditional : Bool, ifTrue : String, ?ifFalse : String = "") : Node {
     return cl(conditional ? ifTrue : ifFalse);
@@ -145,6 +155,8 @@ class Node {
 
   /**
    * Adds a single style to a virtual Node based on a conditional
+   *
+   * If the conditional is true, the ifTrue style value is used, otherwise the ifFalse value is used.
    */
   public function stc(name : String, conditional : Bool, ifTrue : String, ?ifFalse : String = "") : Node {
     return st(name, conditional ? ifTrue : ifFalse);
@@ -159,6 +171,16 @@ class Node {
   }
 
   /**
+   * Adds mutliple attributes to this virtual Node.
+   */
+  public function attrs(attributes : AttributeMap) : Node {
+    for (key in attributes.keys()) {
+      data.attributes.set(key, attributes.get(key));
+    }
+    return this;
+  }
+
+  /**
    * Adds a properity to this virtual Node
    */
   public function prop(name : String, value : Dynamic) : Node {
@@ -169,7 +191,7 @@ class Node {
   /**
    * Adds an event binding to this virtual Node
    */
-  public function on(name : String, listener : Dynamic -> Void) {
+  public function on(name : String, listener : EventHandler) {
     data.events.set(name, listener);
     return this;
   }

@@ -2,6 +2,7 @@ package vdom;
 
 import js.Browser;
 import js.html.Element;
+import vdom.Node.*;
 
 class VDom {
   /**
@@ -22,19 +23,19 @@ class VDom {
       element.classList.add(c);
 
     for (name in node.data.styles.keys())
-      element.style.setProperty(name, node.data.styles[name]);
+      element.style.setProperty(name, node.data.styles.get(name));
 
     for (name in node.data.attributes.keys())
-      element.setAttribute(name, node.data.attributes[name]);
+      element.setAttribute(name, node.data.attributes.get(name));
 
     // TODO: should this differentiate between attributes and properties?
     // TODO: is there a better way to set properties (like required?) (other than setAttribute)
     for (name in node.data.properties.keys())
-      Reflect.setField(element, name, node.data.properties[name]);
+      Reflect.setField(element, name, node.data.properties.get(name));
 
     // TODO: Use addEventListener/removeEventListener?
     for (name in node.data.events.keys())
-      Reflect.setField(element, 'on$name', node.data.events[name]);
+      Reflect.setField(element, 'on$name', node.data.events.get(name));
 
     for (child in node.data.children) {
       switch child {
