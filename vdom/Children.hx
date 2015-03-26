@@ -1,6 +1,6 @@
 package vdom;
 
-enum Child {
+enum Children {
   Node(child : Node);
   Nodes(children : Array<Node>);
   Text(text : String);

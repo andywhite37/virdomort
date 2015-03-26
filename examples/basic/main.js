@@ -46,7 +46,7 @@ examples_basic_Main.main = function() {
 		};
 		$r = _g1;
 		return $r;
-	}(this))},vdom_Child.Nodes([vdom_Node.v("h1",null,vdom_Child.Text("something"))])));
+	}(this))},vdom_Children.Nodes([vdom_Node.v("h1",null,vdom_Children.Text("something"))])));
 	console.log(node);
 	var root = window.document.getElementById("root");
 	vdom_VDom.append(root,node);
@@ -88,10 +88,14 @@ haxe_ds_StringMap.prototype = {
 		return out;
 	}
 };
-var vdom_Child = { __constructs__ : ["Node","Nodes","Text"] };
-vdom_Child.Node = function(child) { var $x = ["Node",0,child]; $x.__enum__ = vdom_Child; return $x; };
-vdom_Child.Nodes = function(children) { var $x = ["Nodes",1,children]; $x.__enum__ = vdom_Child; return $x; };
-vdom_Child.Text = function(text) { var $x = ["Text",2,text]; $x.__enum__ = vdom_Child; return $x; };
+var vdom_Children = { __constructs__ : ["Node","Nodes","Text"] };
+vdom_Children.Node = function(child) { var $x = ["Node",0,child]; $x.__enum__ = vdom_Children; return $x; };
+vdom_Children.Nodes = function(children) { var $x = ["Nodes",1,children]; $x.__enum__ = vdom_Children; return $x; };
+vdom_Children.Text = function(text) { var $x = ["Text",2,text]; $x.__enum__ = vdom_Children; return $x; };
+var vdom_Diff = function() { };
+vdom_Diff.diff = function(previous,current) {
+	return new vdom_Patch();
+};
 var vdom_Node = function(tag,data,children) {
 	if(data == null) data = { };
 	this.data = data;
@@ -162,22 +166,19 @@ vdom_Node.prototype = {
 		return this;
 	}
 	,child: function(node) {
-		this.data.children.push(vdom_Child.Node(node));
+		this.data.children.push(vdom_Children.Node(node));
 		return this;
 	}
 	,children: function(nodes) {
-		this.data.children.push(vdom_Child.Nodes(nodes));
+		this.data.children.push(vdom_Children.Nodes(nodes));
 		return this;
 	}
 	,text: function(text) {
-		this.data.children.push(vdom_Child.Text(text));
+		this.data.children.push(vdom_Children.Text(text));
 		return this;
 	}
 };
 var vdom_Patch = function() {
-};
-vdom_Patch.diff = function(previous,current) {
-	return new vdom_Patch();
 };
 vdom_Patch.prototype = {
 	apply: function(element) {
@@ -252,7 +253,7 @@ vdom_VDom.append = function(container,node) {
 	return element;
 };
 vdom_VDom.redraw = function(previous,current) {
-	var patch = vdom_Patch.diff(previous,current);
+	var patch = vdom_Diff.diff(previous,current);
 	patch.apply(previous.data.rootElement);
 };
 var __map_reserved = {}

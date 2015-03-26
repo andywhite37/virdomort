@@ -10,32 +10,25 @@ class VDom {
   public static function render(node : Node) : Element {
     var element : Element;
 
-    // Create the element
-    if (node.data.namespace != null) {
+    if (node.data.namespace != null)
       element = Browser.document.createElementNS(node.data.tag, node.data.namespace);
-    } else {
+    else
       element = Browser.document.createElement(node.data.tag);
-    }
 
-    // Set id
     if (node.data.id != null)
       element.id = node.data.id;
 
-    // Set class
     for (c in node.data.classes)
       element.classList.add(c);
 
-    // Set styles
     for (name in node.data.styles.keys())
       element.style.setProperty(name, node.data.styles[name]);
 
-    // Set attributes
     for (name in node.data.attributes.keys())
       element.setAttribute(name, node.data.attributes[name]);
 
     // TODO: should this differentiate between attributes and properties?
-    // TODO: is there a better way to set properties (like required?)
-    // (other than setAttribute)
+    // TODO: is there a better way to set properties (like required?) (other than setAttribute)
     for (name in node.data.properties.keys())
       Reflect.setField(element, name, node.data.properties[name]);
 
@@ -43,7 +36,6 @@ class VDom {
     for (name in node.data.events.keys())
       Reflect.setField(element, 'on$name', node.data.events[name]);
 
-    // Render children
     for (child in node.data.children) {
       switch child {
         case Node(node):
@@ -84,7 +76,7 @@ class VDom {
    * to-date with the state of the "new" virtual Node.
    */
   public static function redraw(previous : Node, current : Node) {
-    var patch = Patch.diff(previous, current);
+    var patch = Diff.diff(previous, current);
     patch.apply(previous.data.rootElement);
   }
 }
