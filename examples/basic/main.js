@@ -1,15 +1,15 @@
 (function (console) { "use strict";
-var EReg = function(r,opt) {
-	opt = opt.split("u").join("");
-	this.r = new RegExp(r,opt);
-};
-EReg.prototype = {
-	split: function(s) {
-		var d = "#__delim__#";
-		return s.replace(this.r,d).split(d);
-	}
-};
+var $estr = function() { return js_Boot.__string_rec(this,''); };
 var HxOverrides = function() { };
+HxOverrides.__name__ = true;
+HxOverrides.dateStr = function(date) {
+	var m = date.getMonth() + 1;
+	var d = date.getDate();
+	var h = date.getHours();
+	var mi = date.getMinutes();
+	var s = date.getSeconds();
+	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -17,11 +17,28 @@ HxOverrides.iter = function(a) {
 		return this.arr[this.cur++];
 	}};
 };
+Math.__name__ = true;
 var Reflect = function() { };
+Reflect.__name__ = true;
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var StringBuf = function() {
+	this.b = "";
+};
+StringBuf.__name__ = true;
+StringBuf.prototype = {
+	add: function(x) {
+		this.b += Std.string(x);
+	}
+};
 var examples_basic_Main = function() { };
+examples_basic_Main.__name__ = true;
 examples_basic_Main.render = function(count) {
 };
 examples_basic_Main.main = function() {
@@ -30,31 +47,37 @@ examples_basic_Main.main = function() {
 		e.preventDefault();
 		console.log("click");
 	};
-	var node = vdom_Node.v("div").id("test").cl("my-class").cln("my-class-1 my-class-2  my-class-3").clc(true,"my-true-class-1","my-false-class-1").clc(false,"my-true-class-2","my-false-class-2").st("text-decoration","none").stc("display",true,"block").st("height","500px").st("width","500px").st("background-color","whitesmoke").attr("data-test","123").prop("required",true).on("click",onClick).child(vdom_Node.v("span").id("my-span").text("Hi")).children([vdom_Node.v("h1").text("H1"),vdom_Node.v("h2").text("H2")]).text("Some text").text("Some more text").child(vdom_Node.v("div",{ classes : ["test-1","test-2"], attributes : (function($this) {
+	var tree = virdomort_dom_VElementDomTools.ve("div",null,null,(function($this) {
 		var $r;
 		var _g = new haxe_ds_StringMap();
-		if(__map_reserved["data-test"] != null) _g.setReserved("data-test","some data"); else _g.h["data-test"] = "some data";
+		{
+			var value = virdomort_AttributeValue.VString("test-id");
+			if(__map_reserved.id != null) _g.setReserved("id",value); else _g.h["id"] = value;
+		}
+		{
+			var value1 = virdomort_AttributeValue.VString("test-class-1 test-class-2");
+			if(__map_reserved["class"] != null) _g.setReserved("class",value1); else _g.h["class"] = value1;
+		}
 		$r = _g;
 		return $r;
-	}(this)), events : (function($this) {
+	}(this)),(function($this) {
 		var $r;
 		var _g1 = new haxe_ds_StringMap();
-		if(__map_reserved.click != null) _g1.setReserved("click",function(e1) {
-			console.log("clicked");
-		}); else _g1.h["click"] = function(e1) {
-			console.log("clicked");
-		};
+		if(__map_reserved.click != null) _g1.setReserved("click",onClick); else _g1.h["click"] = onClick;
 		$r = _g1;
 		return $r;
-	}(this))},vdom_Child.Nodes([vdom_Node.v("h1",null,vdom_Child.Text("something"))])));
-	console.log(node);
+	}(this)),[virdomort_dom_VTextTools.vt("Hello, world!")]);
+	console.log(tree);
 	var root = window.document.getElementById("root");
-	vdom_VDom.append(root,node);
+	var el = virdomort_dom_Dom.create(tree);
+	root.appendChild(el);
 };
 var haxe_IMap = function() { };
+haxe_IMap.__name__ = true;
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
+haxe_ds_StringMap.__name__ = true;
 haxe_ds_StringMap.__interfaces__ = [haxe_IMap];
 haxe_ds_StringMap.prototype = {
 	set: function(key,value) {
@@ -87,185 +110,254 @@ haxe_ds_StringMap.prototype = {
 		}
 		return out;
 	}
-};
-var vdom_Child = { __constructs__ : ["Node","Nodes","Text"] };
-vdom_Child.Node = function(child) { var $x = ["Node",0,child]; $x.__enum__ = vdom_Child; return $x; };
-vdom_Child.Nodes = function(children) { var $x = ["Nodes",1,children]; $x.__enum__ = vdom_Child; return $x; };
-vdom_Child.Text = function(text) { var $x = ["Text",2,text]; $x.__enum__ = vdom_Child; return $x; };
-var vdom_Diff = function() { };
-vdom_Diff.diff = function(previous,current) {
-	return new vdom_Patch();
-};
-var vdom_Node = function(tag,data,child) {
-	if(data == null) data = { };
-	this.data = data;
-	if(tag != null) this.data.tag = tag;
-	if(this.data.tag == null) this.data.tag = "div";
-	if(this.data.classes == null) this.data.classes = [];
-	if(this.data.styles == null) this.data.styles = new haxe_ds_StringMap();
-	if(this.data.attributes == null) this.data.attributes = new haxe_ds_StringMap();
-	if(this.data.properties == null) this.data.properties = new haxe_ds_StringMap();
-	if(this.data.events == null) this.data.events = new haxe_ds_StringMap();
-	if(this.data.children == null) this.data.children = [];
-	if(child != null) this.data.children.push(child);
-};
-vdom_Node.v = function(tag,data,child) {
-	return new vdom_Node(tag,data,child);
-};
-vdom_Node.prototype = {
-	tag: function(tag) {
-		this.data.tag = tag;
-		return this;
-	}
-	,id: function(id) {
-		this.data.id = id;
-		return this;
-	}
-	,key: function(key) {
-		this.data.key = key;
-		return this;
-	}
-	,ns: function($namespace) {
-		this.data["namespace"] = $namespace;
-		return this;
-	}
-	,cl: function(cl) {
-		this.data.classes.push(cl);
-		return this;
-	}
-	,cls: function(classes) {
-		this.data.classes = this.data.classes.concat(classes);
-		return this;
-	}
-	,cln: function(className) {
-		return this.cls(new EReg("[ \t]+","g").split(className));
-	}
-	,clc: function(conditional,ifTrue,ifFalse) {
-		if(ifFalse == null) ifFalse = "";
-		return this.cl(conditional?ifTrue:ifFalse);
-	}
-	,st: function(name,value) {
-		this.data.styles.set(name,value);
-		return this;
-	}
-	,stc: function(name,conditional,ifTrue,ifFalse) {
-		if(ifFalse == null) ifFalse = "";
-		return this.st(name,conditional?ifTrue:ifFalse);
-	}
-	,attr: function(name,value) {
-		this.data.attributes.set(name,value);
-		return this;
-	}
-	,attrs: function(attributes) {
-		var $it0 = attributes.keys();
-		while( $it0.hasNext() ) {
-			var key = $it0.next();
-			var value;
-			value = __map_reserved[key] != null?attributes.getReserved(key):attributes.h[key];
-			this.data.attributes.set(key,value);
+	,toString: function() {
+		var s = new StringBuf();
+		s.b += "{";
+		var keys = this.arrayKeys();
+		var _g1 = 0;
+		var _g = keys.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var k = keys[i];
+			if(k == null) s.b += "null"; else s.b += "" + k;
+			s.b += " => ";
+			s.add(Std.string(__map_reserved[k] != null?this.getReserved(k):this.h[k]));
+			if(i < keys.length) s.b += ", ";
 		}
-		return this;
-	}
-	,prop: function(name,value) {
-		var value1 = value;
-		this.data.properties.set(name,value1);
-		return this;
-	}
-	,on: function(name,listener) {
-		this.data.events.set(name,listener);
-		return this;
-	}
-	,child: function(node) {
-		this.data.children.push(vdom_Child.Node(node));
-		return this;
-	}
-	,children: function(nodes) {
-		this.data.children.push(vdom_Child.Nodes(nodes));
-		return this;
-	}
-	,text: function(text) {
-		this.data.children.push(vdom_Child.Text(text));
-		return this;
+		s.b += "}";
+		return s.b;
 	}
 };
-var vdom_Patch = function() {
-};
-vdom_Patch.prototype = {
-	apply: function(element) {
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str2 = o[0] + "(";
+				s += "\t";
+				var _g1 = 2;
+				var _g = o.length;
+				while(_g1 < _g) {
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
+				}
+				return str2 + ")";
+			}
+			var l = o.length;
+			var i;
+			var str1 = "[";
+			s += "\t";
+			var _g2 = 0;
+			while(_g2 < l) {
+				var i2 = _g2++;
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
+			}
+			str1 += "]";
+			return str1;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
 	}
 };
-var vdom_VDom = function() { };
-vdom_VDom.render = function(node) {
-	var element;
-	if(node.data["namespace"] != null) element = window.document.createElementNS(node.data.tag,node.data["namespace"]); else element = window.document.createElement(node.data.tag);
-	if(node.data.id != null) element.id = node.data.id;
-	var _g = 0;
-	var _g1 = node.data.classes;
-	while(_g < _g1.length) {
-		var c = _g1[_g];
-		++_g;
-		element.classList.add(c);
+var virdomort_AttributeValue = { __ename__ : true, __constructs__ : ["VNone","VInt","VFloat","VBool","VString","VDate","VStrings","VStringMap"] };
+virdomort_AttributeValue.VNone = ["VNone",0];
+virdomort_AttributeValue.VNone.toString = $estr;
+virdomort_AttributeValue.VNone.__enum__ = virdomort_AttributeValue;
+virdomort_AttributeValue.VInt = function(v) { var $x = ["VInt",1,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+virdomort_AttributeValue.VFloat = function(v) { var $x = ["VFloat",2,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+virdomort_AttributeValue.VBool = function(v) { var $x = ["VBool",3,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+virdomort_AttributeValue.VString = function(v) { var $x = ["VString",4,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+virdomort_AttributeValue.VDate = function(v) { var $x = ["VDate",5,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+virdomort_AttributeValue.VStrings = function(v) { var $x = ["VStrings",6,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+virdomort_AttributeValue.VStringMap = function(v) { var $x = ["VStringMap",7,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
+var virdomort_VElement = function(tag,key,$namespace,attributes,events,children) {
+	this.tag = tag;
+	this.key = key;
+	this["namespace"] = $namespace;
+	if(attributes != null) this.attributes = attributes; else this.attributes = new haxe_ds_StringMap();
+	if(events != null) this.events = events; else this.events = new haxe_ds_StringMap();
+	if(children != null) this.children = children; else this.children = [];
+};
+virdomort_VElement.__name__ = true;
+var virdomort_VElementTools = function() { };
+virdomort_VElementTools.__name__ = true;
+virdomort_VElementTools.prototype = {
+	tag: function(velement,tag) {
+		velement.tag = tag;
+		return velement;
 	}
-	var $it0 = node.data.styles.keys();
+	,key: function(velement,key) {
+		velement.key = key;
+		return velement;
+	}
+	,ns: function(velement,$namespace) {
+		velement["namespace"] = $namespace;
+		return velement;
+	}
+	,attr: function(velement,name,value) {
+		velement.attributes.set(name,value);
+		return velement;
+	}
+	,on: function(velement,name,eventHandler) {
+		velement.events.set(name,eventHandler);
+		return velement;
+	}
+	,child: function(velement,c) {
+		velement.children.push(c);
+		return velement;
+	}
+	,children: function(velement,cs) {
+		velement.children = velement.children.concat(cs);
+		return velement;
+	}
+};
+var virdomort_VNode = { __ename__ : true, __constructs__ : ["VElement","VText"] };
+virdomort_VNode.VElement = function(element) { var $x = ["VElement",0,element]; $x.__enum__ = virdomort_VNode; $x.toString = $estr; return $x; };
+virdomort_VNode.VText = function(text) { var $x = ["VText",1,text]; $x.__enum__ = virdomort_VNode; $x.toString = $estr; return $x; };
+var virdomort_VText = function(text) {
+	this.text = text;
+};
+virdomort_VText.__name__ = true;
+var virdomort_dom_Dom = function() { };
+virdomort_dom_Dom.__name__ = true;
+virdomort_dom_Dom.create = function(vnode) {
+	switch(vnode[1]) {
+	case 1:
+		var vtext = vnode[2];
+		return virdomort_dom_Dom.createText(vtext);
+	case 0:
+		var velement = vnode[2];
+		return virdomort_dom_Dom.createElement(velement);
+	}
+};
+virdomort_dom_Dom.createText = function(vtext) {
+	var rtext = window.document.createTextNode(vtext.text);
+	vtext.ref = rtext;
+	return rtext;
+};
+virdomort_dom_Dom.createElement = function(velement) {
+	var relement = window.document.createElement(velement.tag);
+	velement.ref = relement;
+	var $it0 = velement.attributes.keys();
 	while( $it0.hasNext() ) {
-		var name = $it0.next();
-		element.style.setProperty(name,node.data.styles.get(name));
+		var key = $it0.next();
+		var value;
+		{
+			var _g = velement.attributes.get(key);
+			switch(_g[1]) {
+			case 1:
+				var v = _g[2];
+				if(v == null) value = "null"; else value = "" + v;
+				break;
+			case 2:
+				var v1 = _g[2];
+				if(v1 == null) value = "null"; else value = "" + v1;
+				break;
+			case 3:
+				var v2 = _g[2];
+				if(v2 == null) value = "null"; else value = "" + v2;
+				break;
+			case 4:
+				var v3 = _g[2];
+				value = v3;
+				break;
+			case 5:
+				var v4 = _g[2];
+				value = HxOverrides.dateStr(v4);
+				break;
+			case 6:
+				var v5 = _g[2];
+				value = v5.join(" ");
+				break;
+			case 7:
+				var v6 = _g[2];
+				value = v6.toString();
+				break;
+			case 0:
+				value = null;
+				break;
+			}
+		}
+		relement[key] = value;
 	}
-	var $it1 = node.data.attributes.keys();
+	var $it1 = velement.events.keys();
 	while( $it1.hasNext() ) {
-		var name1 = $it1.next();
-		element.setAttribute(name1,node.data.attributes.get(name1));
+		var key1 = $it1.next();
+		Reflect.setField(relement,"on" + key1,velement.events.get(key1));
 	}
-	var $it2 = node.data.properties.keys();
-	while( $it2.hasNext() ) {
-		var name2 = $it2.next();
-		Reflect.setField(element,name2,node.data.properties.get(name2));
-	}
-	var $it3 = node.data.events.keys();
-	while( $it3.hasNext() ) {
-		var name3 = $it3.next();
-		Reflect.setField(element,"on" + name3,node.data.events.get(name3));
-	}
-	var _g2 = 0;
-	var _g11 = node.data.children;
-	while(_g2 < _g11.length) {
-		var child = _g11[_g2];
-		++_g2;
-		switch(child[1]) {
+	var _g1 = 0;
+	var _g11 = velement.children;
+	while(_g1 < _g11.length) {
+		var vchild = _g11[_g1];
+		++_g1;
+		var rchild = virdomort_dom_Dom.create(vchild);
+		switch(vchild[1]) {
 		case 0:
-			var node1 = child[2];
-			var childElement = vdom_VDom.render(node1);
-			element.appendChild(childElement);
+			var v7 = vchild[2];
+			v7.ref = rchild;
 			break;
 		case 1:
-			var nodes = child[2];
-			var _g21 = 0;
-			while(_g21 < nodes.length) {
-				var node2 = nodes[_g21];
-				++_g21;
-				var childElement1 = vdom_VDom.render(node2);
-				element.appendChild(childElement1);
-			}
-			break;
-		case 2:
-			var text = child[2];
-			var textElement = window.document.createTextNode(text);
-			element.appendChild(textElement);
+			var v8 = vchild[2];
+			v8.ref = rchild;
 			break;
 		}
+		relement.appendChild(rchild);
 	}
-	node.data.rootElement = element;
-	return element;
+	return relement;
 };
-vdom_VDom.append = function(container,node) {
-	var element = vdom_VDom.render(node);
-	container.appendChild(element);
-	return element;
+var virdomort_dom_VElementDomTools = function() { };
+virdomort_dom_VElementDomTools.__name__ = true;
+virdomort_dom_VElementDomTools.ve = function(tag,key,$namespace,attributes,events,children) {
+	return virdomort_VNode.VElement(new virdomort_VElement(tag,key,$namespace,attributes,events,children));
 };
-vdom_VDom.redraw = function(previous,current) {
-	var patch = vdom_Diff.diff(previous,current);
-	patch.apply(previous.data.rootElement);
+var virdomort_dom_VTextTools = function() { };
+virdomort_dom_VTextTools.__name__ = true;
+virdomort_dom_VTextTools.vt = function(t) {
+	return virdomort_VNode.VText(new virdomort_VText(t));
 };
+String.__name__ = true;
+Array.__name__ = true;
+Date.__name__ = ["Date"];
 var __map_reserved = {}
+virdomort_dom_VElementDomTools.classes = "classes";
+virdomort_dom_VElementDomTools.styles = "styles";
 examples_basic_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

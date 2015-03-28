@@ -1,4 +1,4 @@
-package vdom;
+package virdomort;
 
 class Diff {
   public static function diff(previous : Node, current : Node) {
