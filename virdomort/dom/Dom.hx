@@ -61,8 +61,10 @@ class Dom {
   }
 
   public static function cls(velement : VElement<Node>, classNames : Array<String>) {
-    ensureClasses(velement);
-    velement.attributes[CLASSES_KEY] = velement.attributes[CLASSES_KEY].toStrings().concat(classNames);
+    var classes = getClasses(velement);
+    for (className in classNames) {
+      classes.push(className);
+    }
     return velement;
   }
 
@@ -78,18 +80,44 @@ class Dom {
     }
   }
 
-  static function ensureClasses(velement : VElement<Node>) {
-    if (velement.attributes[CLASSES_KEY] == null) {
-      velement.attributes[CLASSES_KEY] = new Array<String>();
+  public static function st(velement : VElement<Node>, name : String, value : String) {
+    var styles = getStyles(velement);
+    styles[name] = value;
+    return velement;
+  }
+
+  public static function sts(velement : VElement<Node>, s : Array<{ name: String, value: String }>) {
+    var styles = getStyles(velement);
+    for (style in s) {
+      styles[style.name] = style.value;
     }
     return velement;
   }
 
-  static function ensureStyles(velement : VElement<Node>) {
+  public static function stc(velement : VElement<Node>, name : String, conditional : ValOrFunc<Bool>, valueIfTrue : String, ?valueIfFalse : String = "") {
+    if (conditional.getValue()) {
+      return st(velement, name, valueIfTrue);
+    } else {
+      if (valueIfFalse != null && valueIfFalse != "") {
+        return st(velement, name, valueIfFalse);
+      } else {
+        return velement;
+      }
+    }
+  }
+
+  static function getClasses(velement : VElement<Node>) : Array<String> {
+    if (velement.attributes[CLASSES_KEY] == null) {
+      velement.attributes[CLASSES_KEY] = new Array<String>();
+    }
+    return velement.attributes[CLASSES_KEY].toStrings();
+  }
+
+  static function getStyles(velement : VElement<Node>) {
     if (velement.attributes[STYLES_KEY] == null) {
       velement.attributes[STYLES_KEY] = new Map<String, String>();
     }
-    return velement;
+    return velement.attributes[STYLES_KEY].toStringMap();
   }
 
   static function setAttribute(relement : Node, velement : VElement<Node>, key : String) {
