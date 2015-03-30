@@ -4,11 +4,9 @@ import js.Browser;
 import js.html.Event;
 import js.html.MouseEvent;
 import js.html.Node;
-import virdomort.dom.VElementDomTools.ve;
-import virdomort.dom.VTextTools.vt;
-using virdomort.VNode;
-using virdomort.AttributeValue;
-using virdomort.dom.VElementDomTools;
+import virdomort.VNode;
+import virdomort.dom.Dom.ve;
+import virdomort.dom.Dom.vt;
 using virdomort.dom.Dom;
 
 class Main {
@@ -23,21 +21,22 @@ class Main {
       trace("click");
     };
 
-    // Showing how to setup the virtual node using a fluent-like interface
-    var tree = ve("div", null, null, [
-      "id" => VString("test-id"),
-      "class" => VString("test-class-1 test-class-2")
-    ], [
-      "click" => onClick
-    ], [
-      vt("Hello, world!")
-    ]);
+    var tree = ve("div")
+      .cl("test-class")
+      .cln("test-class-1 test-class-2")
+      .clc(true, "class-true-1", "class-false-1")
+      .clc(false, "class-true-2", "class-false-2")
+      .cs([
+        ve("span").c("My Span"),
+        ve("br"),
+        "Hello, world!"
+      ]);
 
     trace(tree);
 
     var root = Browser.document.getElementById("root");
 
-    var el = Dom.create(tree);
+    var el = Dom.createNode(tree);
 
     root.appendChild(el);
   }

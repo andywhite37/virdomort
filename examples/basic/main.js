@@ -1,5 +1,16 @@
 (function (console) { "use strict";
 var $estr = function() { return js_Boot.__string_rec(this,''); };
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+EReg.__name__ = true;
+EReg.prototype = {
+	split: function(s) {
+		var d = "#__delim__#";
+		return s.replace(this.r,d).split(d);
+	}
+};
 var HxOverrides = function() { };
 HxOverrides.__name__ = true;
 HxOverrides.dateStr = function(date) {
@@ -9,6 +20,11 @@ HxOverrides.dateStr = function(date) {
 	var mi = date.getMinutes();
 	var s = date.getSeconds();
 	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+};
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) return undefined;
+	return x;
 };
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
@@ -25,17 +41,14 @@ Reflect.setField = function(o,field,value) {
 };
 var Std = function() { };
 Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
+Std["int"] = function(x) {
+	return x | 0;
 };
-var StringBuf = function() {
-	this.b = "";
-};
-StringBuf.__name__ = true;
-StringBuf.prototype = {
-	add: function(x) {
-		this.b += Std.string(x);
-	}
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
 };
 var examples_basic_Main = function() { };
 examples_basic_Main.__name__ = true;
@@ -47,29 +60,10 @@ examples_basic_Main.main = function() {
 		e.preventDefault();
 		console.log("click");
 	};
-	var tree = virdomort_dom_VElementDomTools.ve("div",null,null,(function($this) {
-		var $r;
-		var _g = new haxe_ds_StringMap();
-		{
-			var value = virdomort_AttributeValue.VString("test-id");
-			if(__map_reserved.id != null) _g.setReserved("id",value); else _g.h["id"] = value;
-		}
-		{
-			var value1 = virdomort_AttributeValue.VString("test-class-1 test-class-2");
-			if(__map_reserved["class"] != null) _g.setReserved("class",value1); else _g.h["class"] = value1;
-		}
-		$r = _g;
-		return $r;
-	}(this)),(function($this) {
-		var $r;
-		var _g1 = new haxe_ds_StringMap();
-		if(__map_reserved.click != null) _g1.setReserved("click",onClick); else _g1.h["click"] = onClick;
-		$r = _g1;
-		return $r;
-	}(this)),[virdomort_dom_VTextTools.vt("Hello, world!")]);
+	var tree = virdomort_dom_Dom.clc(virdomort_dom_Dom.clc(virdomort_dom_Dom.cln(virdomort_dom_Dom.cl(virdomort_dom_Dom.ve("div"),"test-class"),"test-class-1 test-class-2"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),"class-true-1","class-false-1"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(false),"class-true-2","class-false-2").cs([virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve("span").c(virdomort__$VNode_VNode_$Impl_$.fromString("My Span"))),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve("br")),virdomort__$VNode_VNode_$Impl_$.fromString("Hello, world!")]);
 	console.log(tree);
 	var root = window.document.getElementById("root");
-	var el = virdomort_dom_Dom.create(tree);
+	var el = virdomort_dom_Dom.createNode(virdomort__$VNode_VNode_$Impl_$.fromVElement(tree));
 	root.appendChild(el);
 };
 var haxe_IMap = function() { };
@@ -109,23 +103,6 @@ haxe_ds_StringMap.prototype = {
 			}
 		}
 		return out;
-	}
-	,toString: function() {
-		var s = new StringBuf();
-		s.b += "{";
-		var keys = this.arrayKeys();
-		var _g1 = 0;
-		var _g = keys.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var k = keys[i];
-			if(k == null) s.b += "null"; else s.b += "" + k;
-			s.b += " => ";
-			s.add(Std.string(__map_reserved[k] != null?this.getReserved(k):this.h[k]));
-			if(i < keys.length) s.b += ", ";
-		}
-		s.b += "}";
-		return s.b;
 	}
 };
 var js_Boot = function() { };
@@ -197,19 +174,8 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-var virdomort_AttributeValue = { __ename__ : true, __constructs__ : ["VNone","VInt","VFloat","VBool","VString","VDate","VStrings","VStringMap"] };
-virdomort_AttributeValue.VNone = ["VNone",0];
-virdomort_AttributeValue.VNone.toString = $estr;
-virdomort_AttributeValue.VNone.__enum__ = virdomort_AttributeValue;
-virdomort_AttributeValue.VInt = function(v) { var $x = ["VInt",1,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
-virdomort_AttributeValue.VFloat = function(v) { var $x = ["VFloat",2,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
-virdomort_AttributeValue.VBool = function(v) { var $x = ["VBool",3,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
-virdomort_AttributeValue.VString = function(v) { var $x = ["VString",4,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
-virdomort_AttributeValue.VDate = function(v) { var $x = ["VDate",5,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
-virdomort_AttributeValue.VStrings = function(v) { var $x = ["VStrings",6,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
-virdomort_AttributeValue.VStringMap = function(v) { var $x = ["VStringMap",7,v]; $x.__enum__ = virdomort_AttributeValue; $x.toString = $estr; return $x; };
 var virdomort_VElement = function(tag,key,$namespace,attributes,events,children) {
-	this.tag = tag;
+	if(tag != null) this.tag = tag; else this.tag = "div";
 	this.key = key;
 	this["namespace"] = $namespace;
 	if(attributes != null) this.attributes = attributes; else this.attributes = new haxe_ds_StringMap();
@@ -217,56 +183,337 @@ var virdomort_VElement = function(tag,key,$namespace,attributes,events,children)
 	if(children != null) this.children = children; else this.children = [];
 };
 virdomort_VElement.__name__ = true;
-var virdomort_VElementTools = function() { };
-virdomort_VElementTools.__name__ = true;
-virdomort_VElementTools.prototype = {
-	tag: function(velement,tag) {
-		velement.tag = tag;
-		return velement;
+virdomort_VElement.prototype = {
+	t: function(tag) {
+		this.tag = tag;
+		return this;
 	}
-	,key: function(velement,key) {
-		velement.key = key;
-		return velement;
+	,k: function(key) {
+		this.key = key;
+		return this;
 	}
-	,ns: function(velement,$namespace) {
-		velement["namespace"] = $namespace;
-		return velement;
+	,ns: function($namespace) {
+		this["namespace"] = $namespace;
+		return this;
 	}
-	,attr: function(velement,name,value) {
-		velement.attributes.set(name,value);
-		return velement;
+	,attr: function(name,value) {
+		this.attributes.set(name,value);
+		return this;
 	}
-	,on: function(velement,name,eventHandler) {
-		velement.events.set(name,eventHandler);
-		return velement;
+	,on: function(name,eventHandler) {
+		this.events.set(name,eventHandler);
+		return this;
 	}
-	,child: function(velement,c) {
-		velement.children.push(c);
-		return velement;
+	,c: function(child) {
+		this.children.push(child);
+		return this;
 	}
-	,children: function(velement,cs) {
-		velement.children = velement.children.concat(cs);
-		return velement;
+	,cs: function(children) {
+		this.children = this.children.concat(children);
+		return this;
 	}
 };
-var virdomort_VNode = { __ename__ : true, __constructs__ : ["VElement","VText"] };
-virdomort_VNode.VElement = function(element) { var $x = ["VElement",0,element]; $x.__enum__ = virdomort_VNode; $x.toString = $estr; return $x; };
-virdomort_VNode.VText = function(text) { var $x = ["VText",1,text]; $x.__enum__ = virdomort_VNode; $x.toString = $estr; return $x; };
+var virdomort_VNodeEnum = { __ename__ : true, __constructs__ : ["VElement","VText"] };
+virdomort_VNodeEnum.VElement = function(element) { var $x = ["VElement",0,element]; $x.__enum__ = virdomort_VNodeEnum; $x.toString = $estr; return $x; };
+virdomort_VNodeEnum.VText = function(text) { var $x = ["VText",1,text]; $x.__enum__ = virdomort_VNodeEnum; $x.toString = $estr; return $x; };
+var virdomort__$VNode_VNode_$Impl_$ = {};
+virdomort__$VNode_VNode_$Impl_$.__name__ = true;
+virdomort__$VNode_VNode_$Impl_$._new = function(v) {
+	return v;
+};
+virdomort__$VNode_VNode_$Impl_$.fromVElement = function(v) {
+	var v1 = virdomort_VNodeEnum.VElement(v);
+	return v1;
+};
+virdomort__$VNode_VNode_$Impl_$.fromVText = function(v) {
+	var v1 = virdomort_VNodeEnum.VText(v);
+	return v1;
+};
+virdomort__$VNode_VNode_$Impl_$.fromString = function(v) {
+	var v1 = virdomort_VNodeEnum.VText(new virdomort_VText(v));
+	return v1;
+};
+virdomort__$VNode_VNode_$Impl_$.isVElement = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		var v = this1[2];
+		return true;
+	default:
+		return false;
+	}
+};
+virdomort__$VNode_VNode_$Impl_$.isVText = function(this1) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		return true;
+	default:
+		return false;
+	}
+};
+virdomort__$VNode_VNode_$Impl_$.toVElement = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		var v = this1[2];
+		return v;
+	default:
+		throw new Error("Cannot convert VNode to VElement");
+	}
+};
+virdomort__$VNode_VNode_$Impl_$.toVText = function(this1) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		return v;
+	default:
+		throw new Error("Cannot convert VNode to VText");
+	}
+};
+virdomort__$VNode_VNode_$Impl_$.setRef = function(this1,ref) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		v.ref = ref;
+		break;
+	case 0:
+		var v1 = this1[2];
+		v1.ref = ref;
+		break;
+	}
+};
 var virdomort_VText = function(text) {
 	this.text = text;
 };
 virdomort_VText.__name__ = true;
+var virdomort_ValOrFuncEnum = { __ename__ : true, __constructs__ : ["Value","Func"] };
+virdomort_ValOrFuncEnum.Value = function(v) { var $x = ["Value",0,v]; $x.__enum__ = virdomort_ValOrFuncEnum; $x.toString = $estr; return $x; };
+virdomort_ValOrFuncEnum.Func = function(v) { var $x = ["Func",1,v]; $x.__enum__ = virdomort_ValOrFuncEnum; $x.toString = $estr; return $x; };
+var virdomort__$ValOrFunc_ValOrFunc_$Impl_$ = {};
+virdomort__$ValOrFunc_ValOrFunc_$Impl_$.__name__ = true;
+virdomort__$ValOrFunc_ValOrFunc_$Impl_$._new = function(valOrFunc) {
+	return valOrFunc;
+};
+virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue = function(v) {
+	var valOrFunc = virdomort_ValOrFuncEnum.Value(v);
+	return valOrFunc;
+};
+virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromFunc = function(v) {
+	var valOrFunc = virdomort_ValOrFuncEnum.Func(v);
+	return valOrFunc;
+};
+virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		var v = this1[2];
+		return v;
+	case 1:
+		var f = this1[2];
+		return f();
+	}
+};
+var virdomort_ValueEnum = { __ename__ : true, __constructs__ : ["VNone","VInt","VFloat","VBool","VString","VDate","VStrings","VStringMap"] };
+virdomort_ValueEnum.VNone = ["VNone",0];
+virdomort_ValueEnum.VNone.toString = $estr;
+virdomort_ValueEnum.VNone.__enum__ = virdomort_ValueEnum;
+virdomort_ValueEnum.VInt = function(v) { var $x = ["VInt",1,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+virdomort_ValueEnum.VFloat = function(v) { var $x = ["VFloat",2,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+virdomort_ValueEnum.VBool = function(v) { var $x = ["VBool",3,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+virdomort_ValueEnum.VString = function(v) { var $x = ["VString",4,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+virdomort_ValueEnum.VDate = function(v) { var $x = ["VDate",5,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+virdomort_ValueEnum.VStrings = function(v) { var $x = ["VStrings",6,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+virdomort_ValueEnum.VStringMap = function(v) { var $x = ["VStringMap",7,v]; $x.__enum__ = virdomort_ValueEnum; $x.toString = $estr; return $x; };
+var virdomort__$Value_Value_$Impl_$ = {};
+virdomort__$Value_Value_$Impl_$.__name__ = true;
+virdomort__$Value_Value_$Impl_$._new = function(v) {
+	return v;
+};
+virdomort__$Value_Value_$Impl_$.fromInt = function(v) {
+	var v1 = virdomort_ValueEnum.VInt(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.fromFloat = function(v) {
+	var v1 = virdomort_ValueEnum.VFloat(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.fromString = function(v) {
+	var v1 = virdomort_ValueEnum.VString(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.fromBool = function(v) {
+	var v1 = virdomort_ValueEnum.VBool(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.fromDate = function(v) {
+	var v1 = virdomort_ValueEnum.VDate(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.fromStrings = function(v) {
+	var v1 = virdomort_ValueEnum.VStrings(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.fromStringMap = function(v) {
+	var v1 = virdomort_ValueEnum.VStringMap(v);
+	return v1;
+};
+virdomort__$Value_Value_$Impl_$.toValue = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		return null;
+	case 1:
+		var v = this1[2];
+		return v;
+	case 2:
+		var v1 = this1[2];
+		return v1;
+	case 3:
+		var v2 = this1[2];
+		return v2;
+	case 4:
+		var v3 = this1[2];
+		return v3;
+	case 5:
+		var v4 = this1[2];
+		return v4;
+	case 6:
+		var v5 = this1[2];
+		return v5;
+	case 7:
+		var v6 = this1[2];
+		return v6;
+	}
+};
+virdomort__$Value_Value_$Impl_$.isNone = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		return true;
+	default:
+		return false;
+	}
+};
+virdomort__$Value_Value_$Impl_$.toInt = function(this1) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		return v;
+	case 2:
+		var v1 = this1[2];
+		return v1 | 0;
+	case 4:
+		var v2 = this1[2];
+		return Std.parseInt(v2);
+	case 3:
+		var v3 = this1[2];
+		if(v3) return 1; else return 0;
+		break;
+	case 5:
+		var v4 = this1[2];
+		return Std["int"](v4.getTime());
+	default:
+		throw new Error("Cannot convert value to Int");
+	}
+};
+virdomort__$Value_Value_$Impl_$.toFloat = function(this1) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		return v;
+	case 2:
+		var v1 = this1[2];
+		return v1;
+	case 4:
+		var v2 = this1[2];
+		return parseFloat(v2);
+	case 3:
+		var v3 = this1[2];
+		if(v3) return 1.0; else return 0.0;
+		break;
+	case 5:
+		var v4 = this1[2];
+		return v4.getTime();
+	default:
+		throw new Error("Cannot convert value to Float");
+	}
+};
+virdomort__$Value_Value_$Impl_$.toBool = function(this1) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		return v != 0;
+	case 2:
+		var v1 = this1[2];
+		return v1 != 0.0;
+	case 4:
+		var v2 = this1[2];
+		return v2 != null && v2 != "";
+	case 3:
+		var v3 = this1[2];
+		return v3;
+	default:
+		throw new Error("Cannot convert value to Float");
+	}
+};
+virdomort__$Value_Value_$Impl_$.toString = function(this1) {
+	switch(this1[1]) {
+	case 0:
+		return "";
+	case 1:
+		var v = this1[2];
+		if(v == null) return "null"; else return "" + v;
+		break;
+	case 2:
+		var v1 = this1[2];
+		if(v1 == null) return "null"; else return "" + v1;
+		break;
+	case 3:
+		var v2 = this1[2];
+		if(v2 == null) return "null"; else return "" + v2;
+		break;
+	case 5:
+		var v3 = this1[2];
+		return HxOverrides.dateStr(v3);
+	case 4:
+		var v4 = this1[2];
+		return v4;
+	case 6:
+		var v5 = this1[2];
+		return v5.join(" ");
+	case 7:
+		var v6 = this1[2];
+		throw new Error("Cannot convert value to String");
+		break;
+	}
+};
+virdomort__$Value_Value_$Impl_$.toDate = function(this1) {
+	switch(this1[1]) {
+	case 5:
+		var v = this1[2];
+		return v;
+	default:
+		throw new Error("Cannot convert value to Date");
+	}
+};
+virdomort__$Value_Value_$Impl_$.toStrings = function(this1) {
+	switch(this1[1]) {
+	case 6:
+		var v = this1[2];
+		return v;
+	default:
+		throw new Error("Cannot convert value to Array<String>");
+	}
+};
+virdomort__$Value_Value_$Impl_$.toStringMap = function(this1) {
+	switch(this1[1]) {
+	case 7:
+		var v = this1[2];
+		return v;
+	default:
+		throw new Error("Cannot convert value to Map<String, String>");
+	}
+};
 var virdomort_dom_Dom = function() { };
 virdomort_dom_Dom.__name__ = true;
-virdomort_dom_Dom.create = function(vnode) {
-	switch(vnode[1]) {
-	case 1:
-		var vtext = vnode[2];
-		return virdomort_dom_Dom.createText(vtext);
-	case 0:
-		var velement = vnode[2];
-		return virdomort_dom_Dom.createElement(velement);
-	}
+virdomort_dom_Dom.createNode = function(vnode) {
+	if(virdomort__$VNode_VNode_$Impl_$.isVText(vnode)) return virdomort_dom_Dom.createText(virdomort__$VNode_VNode_$Impl_$.toVText(vnode)); else return virdomort_dom_Dom.createElement(virdomort__$VNode_VNode_$Impl_$.toVElement(vnode));
 };
 virdomort_dom_Dom.createText = function(vtext) {
 	var rtext = window.document.createTextNode(vtext.text);
@@ -276,88 +523,108 @@ virdomort_dom_Dom.createText = function(vtext) {
 virdomort_dom_Dom.createElement = function(velement) {
 	var relement = window.document.createElement(velement.tag);
 	velement.ref = relement;
+	virdomort_dom_Dom.setAttributes(relement,velement);
+	virdomort_dom_Dom.setEventHandlers(relement,velement);
+	virdomort_dom_Dom.setChildren(relement,velement);
+	return relement;
+};
+virdomort_dom_Dom.ve = function(tag,key,$namespace,attributes,events,children) {
+	return new virdomort_VElement(tag,key,$namespace,attributes,events,children);
+};
+virdomort_dom_Dom.vt = function(text) {
+	return new virdomort_VText(text);
+};
+virdomort_dom_Dom.id = function(velement,id) {
+	var v = virdomort__$Value_Value_$Impl_$.fromString(id);
+	velement.attributes.set("id",v);
+	v;
+	return velement;
+};
+virdomort_dom_Dom.cl = function(velement,className) {
+	return virdomort_dom_Dom.cls(velement,[className]);
+};
+virdomort_dom_Dom.cln = function(velement,classNames) {
+	return virdomort_dom_Dom.cls(velement,new EReg("[ \t]+","g").split(classNames));
+};
+virdomort_dom_Dom.cls = function(velement,classNames) {
+	virdomort_dom_Dom.ensureClasses(velement);
+	var v = virdomort__$Value_Value_$Impl_$.fromStrings(virdomort__$Value_Value_$Impl_$.toStrings(velement.attributes.get(virdomort_dom_Dom.CLASSES_KEY)).concat(classNames));
+	velement.attributes.set(virdomort_dom_Dom.CLASSES_KEY,v);
+	v;
+	return velement;
+};
+virdomort_dom_Dom.clc = function(velement,conditional,classNameIfTrue,classNameIfFalse) {
+	if(classNameIfFalse == null) classNameIfFalse = "";
+	if(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return virdomort_dom_Dom.cl(velement,classNameIfTrue); else if(classNameIfFalse != null || classNameIfFalse != "") return virdomort_dom_Dom.cl(velement,classNameIfFalse); else return velement;
+};
+virdomort_dom_Dom.ensureClasses = function(velement) {
+	if(velement.attributes.get(virdomort_dom_Dom.CLASSES_KEY) == null) {
+		var v = virdomort__$Value_Value_$Impl_$.fromStrings([]);
+		velement.attributes.set(virdomort_dom_Dom.CLASSES_KEY,v);
+		v;
+	}
+	return velement;
+};
+virdomort_dom_Dom.ensureStyles = function(velement) {
+	if(velement.attributes.get(virdomort_dom_Dom.STYLES_KEY) == null) {
+		var v = virdomort__$Value_Value_$Impl_$.fromStringMap(new haxe_ds_StringMap());
+		velement.attributes.set(virdomort_dom_Dom.STYLES_KEY,v);
+		v;
+	}
+	return velement;
+};
+virdomort_dom_Dom.setAttribute = function(relement,velement,key) {
+	if(key == virdomort_dom_Dom.CLASSES_KEY) {
+		var className = virdomort__$Value_Value_$Impl_$.toStrings(velement.attributes.get(key)).join(" ");
+		relement.className = className;
+		return;
+	}
+	if(key == virdomort_dom_Dom.STYLES_KEY) {
+		var styles = virdomort__$Value_Value_$Impl_$.toStringMap(velement.attributes.get(key));
+		var el = relement;
+		var $it0 = styles.keys();
+		while( $it0.hasNext() ) {
+			var styleKey = $it0.next();
+			Reflect.setField(el.style,styleKey,__map_reserved[styleKey] != null?styles.getReserved(styleKey):styles.h[styleKey]);
+		}
+		return;
+	}
+	var value = virdomort__$Value_Value_$Impl_$.toValue(velement.attributes.get(key));
+	relement.key = value;
+};
+virdomort_dom_Dom.setAttributes = function(relement,velement) {
 	var $it0 = velement.attributes.keys();
 	while( $it0.hasNext() ) {
 		var key = $it0.next();
-		var value;
-		{
-			var _g = velement.attributes.get(key);
-			switch(_g[1]) {
-			case 1:
-				var v = _g[2];
-				if(v == null) value = "null"; else value = "" + v;
-				break;
-			case 2:
-				var v1 = _g[2];
-				if(v1 == null) value = "null"; else value = "" + v1;
-				break;
-			case 3:
-				var v2 = _g[2];
-				if(v2 == null) value = "null"; else value = "" + v2;
-				break;
-			case 4:
-				var v3 = _g[2];
-				value = v3;
-				break;
-			case 5:
-				var v4 = _g[2];
-				value = HxOverrides.dateStr(v4);
-				break;
-			case 6:
-				var v5 = _g[2];
-				value = v5.join(" ");
-				break;
-			case 7:
-				var v6 = _g[2];
-				value = v6.toString();
-				break;
-			case 0:
-				value = null;
-				break;
-			}
-		}
-		relement[key] = value;
+		virdomort_dom_Dom.setAttribute(relement,velement,key);
 	}
-	var $it1 = velement.events.keys();
-	while( $it1.hasNext() ) {
-		var key1 = $it1.next();
-		Reflect.setField(relement,"on" + key1,velement.events.get(key1));
+};
+virdomort_dom_Dom.setEventHandler = function(relement,velement,key) {
+	Reflect.setField(relement,"on" + key,velement.events.get(key));
+};
+virdomort_dom_Dom.setEventHandlers = function(relement,velement) {
+	var $it0 = velement.events.keys();
+	while( $it0.hasNext() ) {
+		var key = $it0.next();
+		virdomort_dom_Dom.setEventHandler(relement,velement,key);
 	}
-	var _g1 = 0;
-	var _g11 = velement.children;
-	while(_g1 < _g11.length) {
-		var vchild = _g11[_g1];
-		++_g1;
-		var rchild = virdomort_dom_Dom.create(vchild);
-		switch(vchild[1]) {
-		case 0:
-			var v7 = vchild[2];
-			v7.ref = rchild;
-			break;
-		case 1:
-			var v8 = vchild[2];
-			v8.ref = rchild;
-			break;
-		}
+};
+virdomort_dom_Dom.setChildren = function(relement,velement) {
+	var _g = 0;
+	var _g1 = velement.children;
+	while(_g < _g1.length) {
+		var vchild = _g1[_g];
+		++_g;
+		var rchild = virdomort_dom_Dom.createNode(vchild);
+		virdomort__$VNode_VNode_$Impl_$.setRef(vchild,rchild);
 		relement.appendChild(rchild);
 	}
-	return relement;
-};
-var virdomort_dom_VElementDomTools = function() { };
-virdomort_dom_VElementDomTools.__name__ = true;
-virdomort_dom_VElementDomTools.ve = function(tag,key,$namespace,attributes,events,children) {
-	return virdomort_VNode.VElement(new virdomort_VElement(tag,key,$namespace,attributes,events,children));
-};
-var virdomort_dom_VTextTools = function() { };
-virdomort_dom_VTextTools.__name__ = true;
-virdomort_dom_VTextTools.vt = function(t) {
-	return virdomort_VNode.VText(new virdomort_VText(t));
 };
 String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = ["Date"];
 var __map_reserved = {}
-virdomort_dom_VElementDomTools.classes = "classes";
-virdomort_dom_VElementDomTools.styles = "styles";
+virdomort_dom_Dom.CLASSES_KEY = "classes";
+virdomort_dom_Dom.STYLES_KEY = "styles";
 examples_basic_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

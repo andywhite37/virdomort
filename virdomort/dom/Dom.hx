@@ -1,15 +1,25 @@
 package virdomort.dom;
 
 import js.Browser;
+import js.Error;
+import js.html.Element;
 import js.html.Node;
+import js.html.Text;
+import virdomort.ValOrFunc;
 import virdomort.VNode;
+import virdomort.VElement;
+import virdomort.VText;
 
 class Dom {
-  public static function create(vnode : VNode<Node>) : Node {
-    return switch vnode {
-      case VText(vtext): createText(vtext);
-      case VElement(velement) : createElement(velement);
-    };
+  public static var CLASSES_KEY(default, never) = "classes";
+  public static var STYLES_KEY(default, never) = "styles";
+
+  public static function createNode(vnode : VNode<Node>) : Node {
+    if (vnode.isVText()) {
+      return createText(vnode);
+    } else {
+      return createElement(vnode);
+    }
   }
 
   public static function createText(vtext : VText<Node>) : Node {
@@ -22,37 +32,107 @@ class Dom {
     var relement = Browser.document.createElement(velement.tag);
     velement.ref = relement;
 
-    for (key in velement.attributes.keys()) {
-      var value : String = switch velement.attributes[key] {
-        case VInt(v): Std.string(v);
-        case VFloat(v): Std.string(v);
-        case VBool(v): Std.string(v);
-        case VString(v) : v;
-        case VDate(v): v.toString();
-        case VStrings(v): v.join(" ");
-        case VStringMap(v): v.toString();
-        case VNone: null;
-        //case VFloat(i): i.
-      };
-
-      Reflect.setField(relement, key, value);
-    }
-
-    for (key in velement.events.keys()) {
-      Reflect.setField(relement, 'on$key', velement.events.get(key));
-    }
-
-    for (vchild in velement.children) {
-      var rchild = create(vchild);
-
-      switch vchild {
-        case VElement(v): v.ref = rchild;
-        case VText(v): v.ref = rchild;
-      };
-
-      relement.appendChild(rchild);
-    }
+    setAttributes(relement, velement);
+    setEventHandlers(relement, velement);
+    setChildren(relement, velement);
 
     return relement;
+  }
+
+  public static function ve(?tag : String, ?key : String, ?namespace : String, ?attributes : Map<String, Value>, ?events : Map<String, EventHandler>, ?children) : VElement<Node> {
+    return new VElement<Node>(tag, key, namespace, attributes, events, children);
+  }
+
+  public static function vt(text) : VText<Node> {
+    return new VText<Node>(text);
+  }
+
+  public static function id(velement : VElement<Node>, id : String) {
+    velement.attributes["id"] = id;
+    return velement;
+  }
+
+  public static function cl(velement : VElement<Node>, className : String) {
+    return cls(velement, [className]);
+  }
+
+  public static function cln(velement : VElement<Node>, classNames : String) {
+    return cls(velement, ~/[ \t]+/g.split(classNames));
+  }
+
+  public static function cls(velement : VElement<Node>, classNames : Array<String>) {
+    ensureClasses(velement);
+    velement.attributes[CLASSES_KEY] = velement.attributes[CLASSES_KEY].toStrings().concat(classNames);
+    return velement;
+  }
+
+  public static function clc(velement : VElement<Node>, conditional : ValOrFunc<Bool>, classNameIfTrue : String, ?classNameIfFalse : String = "") : VElement<Node> {
+    if (conditional.getValue()) {
+      return cl(velement, classNameIfTrue);
+    } else {
+      if (classNameIfFalse != null || classNameIfFalse != "") {
+        return cl(velement, classNameIfFalse);
+      } else {
+        return velement;
+      }
+    }
+  }
+
+  static function ensureClasses(velement : VElement<Node>) {
+    if (velement.attributes[CLASSES_KEY] == null) {
+      velement.attributes[CLASSES_KEY] = new Array<String>();
+    }
+    return velement;
+  }
+
+  static function ensureStyles(velement : VElement<Node>) {
+    if (velement.attributes[STYLES_KEY] == null) {
+      velement.attributes[STYLES_KEY] = new Map<String, String>();
+    }
+    return velement;
+  }
+
+  static function setAttribute(relement : Node, velement : VElement<Node>, key : String) {
+    if (key == CLASSES_KEY) {
+      var className = velement.attributes[key].toStrings().join(" ");
+      Reflect.setField(relement, "className", className);
+      return;
+    }
+
+    if (key == STYLES_KEY) {
+      var styles = velement.attributes[key].toStringMap();
+      var el : Element = cast relement;
+      for (styleKey in styles.keys()) {
+        Reflect.setField(el.style, styleKey, styles[styleKey]);
+      }
+      return;
+    }
+
+    var value = velement.attributes[key].toValue();
+    Reflect.setField(relement, "key", value);
+  }
+
+  static function setAttributes(relement : Node, velement : VElement<Node>) {
+    for (key in velement.attributes.keys()) {
+      setAttribute(relement, velement, key);
+    }
+  }
+
+  static function setEventHandler(relement : Node, velement : VElement<Node>, key : String) {
+    Reflect.setField(relement, 'on$key', velement.events.get(key));
+  }
+
+  static function setEventHandlers(relement : Node, velement : VElement<Node>) {
+    for (key in velement.events.keys()) {
+      setEventHandler(relement, velement, key);
+    }
+  }
+
+  static function setChildren(relement : Node, velement : VElement<Node>) {
+    for (vchild in velement.children) {
+      var rchild = createNode(vchild);
+      vchild.setRef(rchild);
+      relement.appendChild(rchild);
+    }
   }
 }
