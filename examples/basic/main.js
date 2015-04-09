@@ -68,7 +68,7 @@ examples_basic_Main.main = function() {
 		e.preventDefault();
 		console.log("click");
 	};
-	var velement = virdomort_dom_Dom.clc(virdomort_dom_Dom.clc(virdomort_dom_Dom.cln(virdomort_dom_Dom.cl(virdomort_dom_Dom.ve("div"),"test-class"),"test-class-1 test-class-2"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),"class-true-1","class-false-1"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(false),"class-true-2","class-false-2").cs([virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.st(virdomort_dom_Dom.ve("span"),"color","blue").c(virdomort__$VNode_VNode_$Impl_$.fromString("My Span"))),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.stc(virdomort_dom_Dom.ve("span"),"background-color",virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),"#ddd").c(virdomort__$VNode_VNode_$Impl_$.fromString("My Span 2"))),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve("br")),virdomort__$VNode_VNode_$Impl_$.fromString("Hello, world!"),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve("hr")),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve("button").on("click",onClick).c(virdomort__$VNode_VNode_$Impl_$.fromString("Click me")))]);
+	var velement = virdomort_dom_Dom.clc(virdomort_dom_Dom.clc(virdomort_dom_Dom.cln(virdomort_dom_Dom.cl(virdomort_dom_Dom.ve(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("div")),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("test-class")),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("test-class-1 test-class-2")),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-true-1"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-false-1")),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(false),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-true-2"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-false-2")).cs([virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.st(virdomort_dom_Dom.ve(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("color"),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("blue")).c(virdomort__$VNode_VNode_$Impl_$.fromString("My Span"))),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.stc(virdomort_dom_Dom.ve(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")),"background-color",virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("#ddd")).c(virdomort__$VNode_VNode_$Impl_$.fromString("My Span 2"))),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("br"))),virdomort__$VNode_VNode_$Impl_$.fromString("Hello, world!"),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("hr"))),virdomort__$VNode_VNode_$Impl_$.fromVElement(virdomort_dom_Dom.ve(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("button")).on("click",onClick).c(virdomort__$VNode_VNode_$Impl_$.fromString("Click me")))]);
 	console.log(velement);
 	var root = window.document.getElementById("root");
 	var relement = virdomort_dom_Dom.createNode(virdomort__$VNode_VNode_$Impl_$.fromVElement(velement));
@@ -752,6 +752,12 @@ virdomort_dom_Dom.updateEventHandlers = function(vold,vnew,element,patch) {
 virdomort_dom_Dom.updateChildren = function(vold,vnew,element,patch) {
 	if(!patch.hasChildrenChanges) return;
 	if(patch.hasAddedChildren) {
+		var added = patch.addedChildren;
+		var _g = 0;
+		while(_g < added.length) {
+			var vchild = added[_g];
+			++_g;
+		}
 	}
 	if(patch.hasRemovedChildren) {
 	}
@@ -766,25 +772,22 @@ virdomort_dom_Dom.replaceNode = function(vold,vnew) {
 	roldParent.appendChild(rnew);
 };
 virdomort_dom_Dom.ve = function(tag,key,$namespace,attributes,events,children) {
-	return new virdomort_VElement(tag,key,$namespace,attributes,events,children);
+	return new virdomort_VElement(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(tag),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(key),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue($namespace),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(attributes),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(events),virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(children));
 };
 virdomort_dom_Dom.vt = function(text) {
-	return new virdomort_VText(text);
-};
-virdomort_dom_Dom.getId = function(velement) {
-	return virdomort__$Value_Value_$Impl_$.toString(velement.attributes.get(virdomort_dom_Dom.V_ID_KEY));
+	return new virdomort_VText(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(text));
 };
 virdomort_dom_Dom.id = function(velement,id) {
-	var v = virdomort__$Value_Value_$Impl_$.fromString(id);
+	var v = virdomort__$Value_Value_$Impl_$.fromString(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(id));
 	velement.attributes.set(virdomort_dom_Dom.V_ID_KEY,v);
 	v;
 	return velement;
 };
 virdomort_dom_Dom.cl = function(velement,className) {
-	return virdomort_dom_Dom.cls(velement,[className]);
+	return virdomort_dom_Dom.cls(velement,[virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(className)]);
 };
 virdomort_dom_Dom.cln = function(velement,classNames) {
-	return virdomort_dom_Dom.cls(velement,new EReg("[ \t]+","g").split(classNames));
+	return virdomort_dom_Dom.cls(velement,new EReg("[ \t]+","g").split(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(classNames)));
 };
 virdomort_dom_Dom.cls = function(velement,classNames) {
 	var classes = virdomort_dom_Dom.getClasses(velement);
@@ -797,22 +800,22 @@ virdomort_dom_Dom.cls = function(velement,classNames) {
 	return velement;
 };
 virdomort_dom_Dom.clc = function(velement,conditional,classNameIfTrue,classNameIfFalse) {
-	if(classNameIfFalse == null) classNameIfFalse = "";
-	if(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return virdomort_dom_Dom.cl(velement,classNameIfTrue); else if(classNameIfFalse != null || classNameIfFalse != "") return virdomort_dom_Dom.cl(velement,classNameIfFalse); else return velement;
+	if(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return virdomort_dom_Dom.cl(velement,classNameIfTrue); else if(classNameIfFalse != null || classNameIfFalse != virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("")) return virdomort_dom_Dom.cl(velement,classNameIfFalse); else return velement;
 };
 virdomort_dom_Dom.st = function(velement,name,value) {
 	var styles = virdomort_dom_Dom.getStyles(velement);
-	{
-		if(__map_reserved[name] != null) styles.setReserved(name,value); else styles.h[name] = value;
-		value;
-	}
+	var k = virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(name);
+	var v = virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(value);
+	if(__map_reserved[k] != null) styles.setReserved(k,v); else styles.h[k] = v;
+	v;
 	return velement;
 };
 virdomort_dom_Dom.sts = function(velement,s) {
 	var styles = virdomort_dom_Dom.getStyles(velement);
 	var _g = 0;
-	while(_g < s.length) {
-		var style = s[_g];
+	var _g1 = virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(s);
+	while(_g < _g1.length) {
+		var style = _g1[_g];
 		++_g;
 		var v = style.value;
 		styles.set(style.name,v);
@@ -821,8 +824,7 @@ virdomort_dom_Dom.sts = function(velement,s) {
 	return velement;
 };
 virdomort_dom_Dom.stc = function(velement,name,conditional,valueIfTrue,valueIfFalse) {
-	if(valueIfFalse == null) valueIfFalse = "";
-	if(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return virdomort_dom_Dom.st(velement,name,valueIfTrue); else if(valueIfFalse != null && valueIfFalse != "") return virdomort_dom_Dom.st(velement,name,valueIfFalse); else return velement;
+	if(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return virdomort_dom_Dom.st(velement,virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(name),valueIfTrue); else if(valueIfFalse != null && valueIfFalse != virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("")) return virdomort_dom_Dom.st(velement,virdomort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(name),valueIfFalse); else return velement;
 };
 virdomort_dom_Dom.getClasses = function(velement) {
 	if(velement.attributes.get(virdomort_dom_Dom.V_CLASSES_KEY) == null) {

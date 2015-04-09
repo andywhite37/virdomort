@@ -144,6 +144,9 @@ class Dom {
     }
 
     if (patch.hasAddedChildren) {
+      var added = patch.addedChildren;
+      for (vchild in added) {
+      }
     }
 
     if (patch.hasRemovedChildren) {
@@ -161,29 +164,31 @@ class Dom {
     roldParent.appendChild(rnew);
   }
 
-  public static function ve(?tag : String, ?key : String, ?namespace : String, ?attributes : Map<String, Value>, ?events : Map<String, EventHandler>, ?children) : VElement<Node> {
-    return new VElement<Node>(tag, key, namespace, attributes, events, children);
+  public static function ve(
+      ?tag : ValOrFunc<String>,
+      ?key : ValOrFunc<String>,
+      ?namespace : ValOrFunc<String>,
+      ?attributes : ValOrFunc<Map<String, Value>>,
+      ?events : ValOrFunc<Map<String, EventHandler>>,
+      ?children : ValOrFunc<Array<VNode<Node>>>) : VElement<Node> {
+    return new VElement<Node>(tag.getValue(), key.getValue(), namespace.getValue(), attributes.getValue(), events.getValue(), children.getValue());
   }
 
-  public static function vt(text) : VText<Node> {
-    return new VText<Node>(text);
+  public static function vt(text : ValOrFunc<String>) : VText<Node> {
+    return new VText<Node>(text.getValue());
   }
 
-  public static function getId(velement : VElement<Node>) : String {
-    return velement.attributes[V_ID_KEY];
-  }
-
-  public static function id(velement : VElement<Node>, id : String) {
-    velement.attributes[V_ID_KEY] = id;
+  public static function id(velement : VElement<Node>, id : ValOrFunc<String>) {
+    velement.attributes[V_ID_KEY] = id.getValue();
     return velement;
   }
 
-  public static function cl(velement : VElement<Node>, className : String) {
-    return cls(velement, [className]);
+  public static function cl(velement : VElement<Node>, className : ValOrFunc<String>) {
+    return cls(velement, [className.getValue()]);
   }
 
-  public static function cln(velement : VElement<Node>, classNames : String) {
-    return cls(velement, ~/[ \t]+/g.split(classNames));
+  public static function cln(velement : VElement<Node>, classNames : ValOrFunc<String>) {
+    return cls(velement, ~/[ \t]+/g.split(classNames.getValue()));
   }
 
   public static function cls(velement : VElement<Node>, classNames : Array<String>) {
@@ -194,7 +199,12 @@ class Dom {
     return velement;
   }
 
-  public static function clc(velement : VElement<Node>, conditional : ValOrFunc<Bool>, classNameIfTrue : String, ?classNameIfFalse : String = "") : VElement<Node> {
+  public static function clc(
+      velement : VElement<Node>,
+      conditional : ValOrFunc<Bool>,
+      classNameIfTrue : ValOrFunc<String>,
+      ?classNameIfFalse : ValOrFunc<String>) : VElement<Node> {
+
     if (conditional.getValue()) {
       return cl(velement, classNameIfTrue);
     } else {
@@ -206,21 +216,26 @@ class Dom {
     }
   }
 
-  public static function st(velement : VElement<Node>, name : String, value : String) {
+  public static function st(velement : VElement<Node>, name : ValOrFunc<String>, value : ValOrFunc<String>) {
     var styles = getStyles(velement);
-    styles[name] = value;
+    styles[name.getValue()] = value.getValue();
     return velement;
   }
 
-  public static function sts(velement : VElement<Node>, s : Array<{ name: String, value: String }>) {
+  public static function sts(velement : VElement<Node>, s : ValOrFunc<Array<{ name: String, value: String }>>) {
     var styles = getStyles(velement);
-    for (style in s) {
+    for (style in s.getValue()) {
       styles[style.name] = style.value;
     }
     return velement;
   }
 
-  public static function stc(velement : VElement<Node>, name : String, conditional : ValOrFunc<Bool>, valueIfTrue : String, ?valueIfFalse : String = "") {
+  public static function stc(
+      velement : VElement<Node>,
+      name : String,
+      conditional : ValOrFunc<Bool>,
+      valueIfTrue : ValOrFunc<String>,
+      ?valueIfFalse : ValOrFunc<String>) {
     if (conditional.getValue()) {
       return st(velement, name, valueIfTrue);
     } else {
