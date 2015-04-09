@@ -1,4 +1,4 @@
-package virdomort;
+package vmort;
 
 @:allow(Diff)
 class Patch<TRef> {

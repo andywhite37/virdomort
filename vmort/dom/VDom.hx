@@ -1,14 +1,14 @@
-package virdomort.dom;
+package vmort.dom;
 
 import js.Browser;
 import js.Error;
 import js.html.Element;
 import js.html.Node;
 import js.html.Text;
-import virdomort.ValOrFunc;
-import virdomort.VNode;
-import virdomort.VElement;
-import virdomort.VText;
+import vmort.ValOrFunc;
+import vmort.VNode;
+import vmort.VElement;
+import vmort.VText;
 
 class VDom {
   public static var V_ID_KEY(default, never) = "id";

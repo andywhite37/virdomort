@@ -1,4 +1,4 @@
-package virdomort;
+package vmort;
 
 import js.Error;
 

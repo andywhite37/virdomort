@@ -2,8 +2,8 @@ package examples.basic;
 
 import js.Browser;
 import js.html.MouseEvent;
-import virdomort.dom.VDom.*;
-using virdomort.dom.VDom;
+import vmort.dom.VDom.*;
+using vmort.dom.VDom;
 
 class Main {
   static function render(count : Int) {

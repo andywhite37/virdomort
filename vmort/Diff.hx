@@ -1,4 +1,4 @@
-package virdomort;
+package vmort;
 
 class Diff {
   public static function getPatch<TRef>(vold : VNode<TRef>, vnew : VNode<TRef>) : Patch<TRef> {

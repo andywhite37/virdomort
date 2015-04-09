@@ -1,4 +1,4 @@
-package virdomort;
+package vmort;
 
 enum ValOrFuncEnum<TValue> {
   Value(v : TValue);

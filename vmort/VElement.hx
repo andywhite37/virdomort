@@ -1,4 +1,4 @@
-package virdomort;
+package vmort;
 
 class VElement<TRef> {
   public var tag(default, default) : String;

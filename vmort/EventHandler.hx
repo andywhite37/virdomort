@@ -1,3 +1,3 @@
-package virdomort;
+package vmort;
 
 typedef EventHandler = Dynamic -> Void;
