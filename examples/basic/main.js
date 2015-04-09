@@ -39,8 +39,16 @@ Reflect.__name__ = true;
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 };
+Reflect.deleteField = function(o,field) {
+	if(!Object.prototype.hasOwnProperty.call(o,field)) return false;
+	delete(o[field]);
+	return true;
+};
 var Std = function() { };
 Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
 Std["int"] = function(x) {
 	return x | 0;
 };
@@ -68,6 +76,21 @@ examples_basic_Main.main = function() {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_ds__$StringMap_StringMapIterator = function(map,keys) {
+	this.map = map;
+	this.keys = keys;
+	this.index = 0;
+	this.count = keys.length;
+};
+haxe_ds__$StringMap_StringMapIterator.__name__ = true;
+haxe_ds__$StringMap_StringMapIterator.prototype = {
+	hasNext: function() {
+		return this.index < this.count;
+	}
+	,next: function() {
+		return this.map.get(this.keys[this.index++]);
+	}
+};
 var haxe_ds_StringMap = function() {
 	this.h = { };
 };
@@ -174,6 +197,91 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var virdomort_Diff = function() { };
+virdomort_Diff.__name__ = true;
+virdomort_Diff.getPatch = function(vold,vnew) {
+	var patch = new virdomort_Patch();
+	patch.isVText = virdomort__$VNode_VNode_$Impl_$.isVText(vold) && virdomort__$VNode_VNode_$Impl_$.isVText(vnew);
+	if(patch.isVText) return virdomort_Diff.getTextPatch(vold,vnew,patch);
+	patch.isVElement = virdomort__$VNode_VNode_$Impl_$.isVElement(vold) && virdomort__$VNode_VNode_$Impl_$.isVElement(vnew);
+	if(patch.isVElement) return virdomort_Diff.getElementPatch(vold,vnew,patch);
+	patch.isPatchable = false;
+	return patch;
+};
+virdomort_Diff.getTextPatch = function(vold,vnew,patch) {
+	var voldText = virdomort__$VNode_VNode_$Impl_$.toVText(vold).text;
+	var vnewText = virdomort__$VNode_VNode_$Impl_$.toVText(vnew).text;
+	patch.isPatchable = true;
+	patch.hasChanges = voldText != vnewText;
+	patch.newText = vnewText;
+	return patch;
+};
+virdomort_Diff.getElementPatch = function(vold,vnew,patch) {
+	patch.isPatchable = virdomort_Diff.isElementPatchable(vold,vnew);
+	if(!patch.isPatchable) return patch;
+	virdomort_Diff.getElementAttributesPatch(vold,vnew,patch);
+	virdomort_Diff.getElementEventHandlersPatch(vold,vnew,patch);
+	virdomort_Diff.getElementChildrenPatch(vold,vnew,patch);
+	patch.hasChanges = patch.hasAttributeChanges || patch.hasEventHandlerChanges || patch.hasChildrenChanges;
+	return patch;
+};
+virdomort_Diff.isElementPatchable = function(vnode1,vnode2) {
+	if(virdomort__$VNode_VNode_$Impl_$.isVElement(vnode1) && virdomort__$VNode_VNode_$Impl_$.isVElement(vnode2)) {
+		var velement1 = virdomort__$VNode_VNode_$Impl_$.toVElement(vnode1);
+		var velement2 = virdomort__$VNode_VNode_$Impl_$.toVElement(vnode2);
+		var key1 = velement1.key;
+		var key2 = velement2.key;
+		if(velement1.key != null && velement2.key != null && velement1.key == velement2.key) return true;
+		var tag1 = velement1.tag;
+		var tag2 = velement2.tag;
+		var ns1 = velement1["namespace"];
+		var ns2 = velement2["namespace"];
+		if(tag1 == tag2 && ns1 == ns2) return true;
+	}
+	return false;
+};
+virdomort_Diff.getElementAttributesPatch = function(vold,vnew,patch) {
+	patch.hasAttributeChanges = patch.hasAddedAttributes || patch.hasRemovedAttributes || patch.hasChangedAttributes;
+	return patch;
+};
+virdomort_Diff.getElementEventHandlersPatch = function(vold,vnew,patch) {
+	patch.hasEventHandlerChanges = patch.hasAddedEventHandlers || patch.hasRemovedEventHandlers || patch.hasChangedEventHandlers;
+	return patch;
+	return patch;
+};
+virdomort_Diff.getElementChildrenPatch = function(vold,vnew,patch) {
+	patch.hasChildrenChanges = patch.hasAddedChildren || patch.hasRemovedChildren || patch.hasMovedChildren;
+	return patch;
+};
+var virdomort_Patch = function() {
+	this.movedChildren = [];
+	this.hasMovedChildren = false;
+	this.removedChildren = [];
+	this.hasRemovedChildren = false;
+	this.addedChildren = [];
+	this.hasAddedChildren = false;
+	this.hasChildrenChanges = false;
+	this.changedEventHandlers = new haxe_ds_StringMap();
+	this.hasChangedEventHandlers = false;
+	this.removedEventHandlers = new haxe_ds_StringMap();
+	this.hasRemovedEventHandlers = false;
+	this.addedEventHandlers = new haxe_ds_StringMap();
+	this.hasAddedEventHandlers = false;
+	this.hasEventHandlerChanges = false;
+	this.changedAttributes = new haxe_ds_StringMap();
+	this.hasChangedAttributes = false;
+	this.removedAttributes = new haxe_ds_StringMap();
+	this.hasRemovedAttributes = false;
+	this.addedAttributes = new haxe_ds_StringMap();
+	this.hasAddedAttributes = false;
+	this.hasAttributeChanges = false;
+	this.isVElement = false;
+	this.newText = null;
+	this.isVText = false;
+	this.hasChanges = false;
+	this.isPatchable = false;
+};
+virdomort_Patch.__name__ = true;
 var virdomort_VElement = function(tag,key,$namespace,attributes,events,children) {
 	if(tag != null) this.tag = tag; else this.tag = "div";
 	this.key = key;
@@ -198,6 +306,16 @@ virdomort_VElement.prototype = {
 	}
 	,attr: function(name,value) {
 		this.attributes.set(name,value);
+		return this;
+	}
+	,attrs: function(map) {
+		var $it0 = map.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			var value;
+			value = __map_reserved[key] != null?map.getReserved(key):map.h[key];
+			this.attributes.set(key,value);
+		}
 		return this;
 	}
 	,on: function(name,eventHandler) {
@@ -267,6 +385,16 @@ virdomort__$VNode_VNode_$Impl_$.toVText = function(this1) {
 		return v;
 	default:
 		throw new Error("Cannot convert VNode to VText");
+	}
+};
+virdomort__$VNode_VNode_$Impl_$.getRef = function(this1) {
+	switch(this1[1]) {
+	case 1:
+		var v = this1[2];
+		return v.ref;
+	case 0:
+		var v1 = this1[2];
+		return v1.ref;
 	}
 };
 virdomort__$VNode_VNode_$Impl_$.setRef = function(this1,ref) {
@@ -523,10 +651,119 @@ virdomort_dom_Dom.createText = function(vtext) {
 virdomort_dom_Dom.createElement = function(velement) {
 	var relement = window.document.createElement(velement.tag);
 	velement.ref = relement;
-	virdomort_dom_Dom.setAttributes(relement,velement);
-	virdomort_dom_Dom.setEventHandlers(relement,velement);
-	virdomort_dom_Dom.setChildren(relement,velement);
+	virdomort_dom_Dom.setAttributes(relement,velement.attributes);
+	virdomort_dom_Dom.setEventHandlers(relement,velement.events);
+	virdomort_dom_Dom.setChildren(relement,velement.children);
 	return relement;
+};
+virdomort_dom_Dom.updateNode = function(vold,vnew) {
+	var patch = virdomort_Diff.getPatch(vold,vnew);
+	if(!patch.isPatchable) virdomort_dom_Dom.replaceNode(vold,vnew);
+	if(!patch.hasChanges) {
+		virdomort__$VNode_VNode_$Impl_$.setRef(vnew,virdomort__$VNode_VNode_$Impl_$.getRef(vold));
+		return;
+	}
+	if(patch.isVText) {
+		virdomort_dom_Dom.updateText(vold,vnew,patch);
+		return;
+	}
+	if(patch.isVElement) {
+		virdomort_dom_Dom.updateElement(vold,vnew,patch);
+		return;
+	}
+	virdomort_dom_Dom.replaceNode(vold,vnew);
+};
+virdomort_dom_Dom.updateText = function(vold,vnew,patch) {
+	var textOld = virdomort__$VNode_VNode_$Impl_$.toVText(vold).ref;
+	textOld.nodeValue = patch.newText;
+	virdomort__$VNode_VNode_$Impl_$.setRef(vnew,textOld);
+};
+virdomort_dom_Dom.updateElement = function(vold,vnew,patch) {
+	var element = virdomort__$VNode_VNode_$Impl_$.getRef(vold);
+	virdomort_dom_Dom.updateAttributes(vold,vnew,element,patch);
+	virdomort_dom_Dom.updateEventHandlers(vold,vnew,element,patch);
+	virdomort_dom_Dom.updateChildren(vold,vnew,element,patch);
+	virdomort__$VNode_VNode_$Impl_$.setRef(vnew,virdomort__$VNode_VNode_$Impl_$.getRef(vold));
+};
+virdomort_dom_Dom.updateAttributes = function(vold,vnew,element,patch) {
+	if(!patch.hasAttributeChanges) return;
+	if(patch.hasAddedAttributes) {
+		var added = patch.addedAttributes;
+		var $it0 = new haxe_ds__$StringMap_StringMapIterator(added,added.arrayKeys());
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			virdomort_dom_Dom.setAttribute(element,virdomort__$Value_Value_$Impl_$.toString(key),(function($this) {
+				var $r;
+				var key1 = virdomort__$Value_Value_$Impl_$.toString(key);
+				$r = __map_reserved[key1] != null?added.getReserved(key1):added.h[key1];
+				return $r;
+			}(this)));
+		}
+	}
+	if(patch.hasRemovedAttributes) {
+		var removed = patch.removedAttributes;
+		var $it1 = new haxe_ds__$StringMap_StringMapIterator(removed,removed.arrayKeys());
+		while( $it1.hasNext() ) {
+			var key2 = $it1.next();
+			virdomort_dom_Dom.removeAttribute(element,virdomort__$Value_Value_$Impl_$.toString(key2));
+		}
+	}
+	if(patch.hasChangedAttributes) {
+		var changed = patch.changedAttributes;
+		var $it2 = new haxe_ds__$StringMap_StringMapIterator(changed,changed.arrayKeys());
+		while( $it2.hasNext() ) {
+			var key3 = $it2.next();
+			virdomort_dom_Dom.setAttribute(element,virdomort__$Value_Value_$Impl_$.toString(key3),(function($this) {
+				var $r;
+				var key4 = virdomort__$Value_Value_$Impl_$.toString(key3);
+				$r = __map_reserved[key4] != null?changed.getReserved(key4):changed.h[key4];
+				return $r;
+			}(this)));
+		}
+	}
+};
+virdomort_dom_Dom.updateEventHandlers = function(vold,vnew,element,patch) {
+	if(!patch.hasEventHandlerChanges) return;
+	if(patch.hasAddedEventHandlers) {
+		var added = patch.addedEventHandlers;
+		var $it0 = added.keys();
+		while( $it0.hasNext() ) {
+			var key = $it0.next();
+			virdomort_dom_Dom.setEventHandler(element,"on" + key,__map_reserved[key] != null?added.getReserved(key):added.h[key]);
+		}
+	}
+	if(patch.hasRemovedEventHandlers) {
+		var removed = patch.removedEventHandlers;
+		var $it1 = new haxe_ds__$StringMap_StringMapIterator(removed,removed.arrayKeys());
+		while( $it1.hasNext() ) {
+			var key1 = $it1.next();
+			virdomort_dom_Dom.removeEventHandler(element,"on" + Std.string(key1));
+		}
+	}
+	if(patch.hasChangedEventHandlers) {
+		var changed = patch.changedEventHandlers;
+		var $it2 = changed.keys();
+		while( $it2.hasNext() ) {
+			var key2 = $it2.next();
+			virdomort_dom_Dom.setEventHandler(element,"on" + key2,__map_reserved[key2] != null?changed.getReserved(key2):changed.h[key2]);
+		}
+	}
+};
+virdomort_dom_Dom.updateChildren = function(vold,vnew,element,patch) {
+	if(!patch.hasChildrenChanges) return;
+	if(patch.hasAddedChildren) {
+	}
+	if(patch.hasRemovedChildren) {
+	}
+	if(patch.hasMovedChildren) {
+	}
+};
+virdomort_dom_Dom.replaceNode = function(vold,vnew) {
+	var rnew = virdomort_dom_Dom.createNode(vnew);
+	var rold = virdomort__$VNode_VNode_$Impl_$.getRef(vold);
+	var roldParent = rold.parentNode;
+	roldParent.removeChild(rold);
+	roldParent.appendChild(rnew);
 };
 virdomort_dom_Dom.ve = function(tag,key,$namespace,attributes,events,children) {
 	return new virdomort_VElement(tag,key,$namespace,attributes,events,children);
@@ -534,9 +771,12 @@ virdomort_dom_Dom.ve = function(tag,key,$namespace,attributes,events,children) {
 virdomort_dom_Dom.vt = function(text) {
 	return new virdomort_VText(text);
 };
+virdomort_dom_Dom.getId = function(velement) {
+	return virdomort__$Value_Value_$Impl_$.toString(velement.attributes.get(virdomort_dom_Dom.V_ID_KEY));
+};
 virdomort_dom_Dom.id = function(velement,id) {
 	var v = virdomort__$Value_Value_$Impl_$.fromString(id);
-	velement.attributes.set("id",v);
+	velement.attributes.set(virdomort_dom_Dom.V_ID_KEY,v);
 	v;
 	return velement;
 };
@@ -585,29 +825,32 @@ virdomort_dom_Dom.stc = function(velement,name,conditional,valueIfTrue,valueIfFa
 	if(virdomort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return virdomort_dom_Dom.st(velement,name,valueIfTrue); else if(valueIfFalse != null && valueIfFalse != "") return virdomort_dom_Dom.st(velement,name,valueIfFalse); else return velement;
 };
 virdomort_dom_Dom.getClasses = function(velement) {
-	if(velement.attributes.get(virdomort_dom_Dom.CLASSES_KEY) == null) {
+	if(velement.attributes.get(virdomort_dom_Dom.V_CLASSES_KEY) == null) {
 		var v = virdomort__$Value_Value_$Impl_$.fromStrings([]);
-		velement.attributes.set(virdomort_dom_Dom.CLASSES_KEY,v);
+		velement.attributes.set(virdomort_dom_Dom.V_CLASSES_KEY,v);
 		v;
 	}
-	return virdomort__$Value_Value_$Impl_$.toStrings(velement.attributes.get(virdomort_dom_Dom.CLASSES_KEY));
+	return virdomort__$Value_Value_$Impl_$.toStrings(velement.attributes.get(virdomort_dom_Dom.V_CLASSES_KEY));
+};
+virdomort_dom_Dom.getClassName = function(velement) {
+	return virdomort_dom_Dom.getClasses(velement).join(" ");
 };
 virdomort_dom_Dom.getStyles = function(velement) {
-	if(velement.attributes.get(virdomort_dom_Dom.STYLES_KEY) == null) {
+	if(velement.attributes.get(virdomort_dom_Dom.V_STYLES_KEY) == null) {
 		var v = virdomort__$Value_Value_$Impl_$.fromStringMap(new haxe_ds_StringMap());
-		velement.attributes.set(virdomort_dom_Dom.STYLES_KEY,v);
+		velement.attributes.set(virdomort_dom_Dom.V_STYLES_KEY,v);
 		v;
 	}
-	return virdomort__$Value_Value_$Impl_$.toStringMap(velement.attributes.get(virdomort_dom_Dom.STYLES_KEY));
+	return virdomort__$Value_Value_$Impl_$.toStringMap(velement.attributes.get(virdomort_dom_Dom.V_STYLES_KEY));
 };
-virdomort_dom_Dom.setAttribute = function(relement,velement,key) {
-	if(key == virdomort_dom_Dom.CLASSES_KEY) {
-		var className = virdomort__$Value_Value_$Impl_$.toStrings(velement.attributes.get(key)).join(" ");
-		relement.className = className;
+virdomort_dom_Dom.setAttribute = function(relement,key,value) {
+	if(key == virdomort_dom_Dom.V_CLASSES_KEY) {
+		var className = virdomort__$Value_Value_$Impl_$.toStrings(value).join(" ");
+		relement[virdomort_dom_Dom.R_CLASS_NAME_KEY] = className;
 		return;
 	}
-	if(key == virdomort_dom_Dom.STYLES_KEY) {
-		var styles = virdomort__$Value_Value_$Impl_$.toStringMap(velement.attributes.get(key));
+	if(key == virdomort_dom_Dom.V_STYLES_KEY) {
+		var styles = virdomort__$Value_Value_$Impl_$.toStringMap(value);
 		var el = relement;
 		var $it0 = styles.keys();
 		while( $it0.hasNext() ) {
@@ -616,34 +859,46 @@ virdomort_dom_Dom.setAttribute = function(relement,velement,key) {
 		}
 		return;
 	}
-	var value = virdomort__$Value_Value_$Impl_$.toValue(velement.attributes.get(key));
-	relement.key = value;
+	var value1 = virdomort__$Value_Value_$Impl_$.toValue(value);
+	relement.key = value1;
 };
-virdomort_dom_Dom.setAttributes = function(relement,velement) {
-	var $it0 = velement.attributes.keys();
+virdomort_dom_Dom.setAttributes = function(relement,attributes) {
+	var $it0 = attributes.keys();
 	while( $it0.hasNext() ) {
 		var key = $it0.next();
-		virdomort_dom_Dom.setAttribute(relement,velement,key);
+		virdomort_dom_Dom.setAttribute(relement,key,__map_reserved[key] != null?attributes.getReserved(key):attributes.h[key]);
 	}
 };
-virdomort_dom_Dom.setEventHandler = function(relement,velement,key) {
-	Reflect.setField(relement,"on" + key,velement.events.get(key));
+virdomort_dom_Dom.removeAttribute = function(relement,key) {
+	if(key == virdomort_dom_Dom.V_CLASSES_KEY) {
+		relement.removeAttribute(virdomort_dom_Dom.R_CLASS_NAME_KEY);
+		return;
+	}
+	if(key == virdomort_dom_Dom.V_STYLES_KEY) {
+		relement.removeAttribute(virdomort_dom_Dom.R_STYLE_KEY);
+		return;
+	}
+	Reflect.deleteField(relement,key);
 };
-virdomort_dom_Dom.setEventHandlers = function(relement,velement) {
-	var $it0 = velement.events.keys();
+virdomort_dom_Dom.setEventHandler = function(relement,key,eventHandler) {
+	relement["on" + key] = eventHandler;
+};
+virdomort_dom_Dom.setEventHandlers = function(relement,events) {
+	var $it0 = events.keys();
 	while( $it0.hasNext() ) {
 		var key = $it0.next();
-		virdomort_dom_Dom.setEventHandler(relement,velement,key);
+		virdomort_dom_Dom.setEventHandler(relement,key,__map_reserved[key] != null?events.getReserved(key):events.h[key]);
 	}
 };
-virdomort_dom_Dom.setChildren = function(relement,velement) {
+virdomort_dom_Dom.removeEventHandler = function(relement,key) {
+	Reflect.deleteField(relement,key);
+};
+virdomort_dom_Dom.setChildren = function(relement,children) {
 	var _g = 0;
-	var _g1 = velement.children;
-	while(_g < _g1.length) {
-		var vchild = _g1[_g];
+	while(_g < children.length) {
+		var vchild = children[_g];
 		++_g;
 		var rchild = virdomort_dom_Dom.createNode(vchild);
-		virdomort__$VNode_VNode_$Impl_$.setRef(vchild,rchild);
 		relement.appendChild(rchild);
 	}
 };
@@ -651,7 +906,10 @@ String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = ["Date"];
 var __map_reserved = {}
-virdomort_dom_Dom.CLASSES_KEY = "classes";
-virdomort_dom_Dom.STYLES_KEY = "styles";
+virdomort_dom_Dom.V_ID_KEY = "classes";
+virdomort_dom_Dom.V_CLASSES_KEY = "classes";
+virdomort_dom_Dom.V_STYLES_KEY = "styles";
+virdomort_dom_Dom.R_CLASS_NAME_KEY = "className";
+virdomort_dom_Dom.R_STYLE_KEY = "style";
 examples_basic_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

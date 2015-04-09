@@ -1,12 +1,8 @@
 package examples.basic;
 
 import js.Browser;
-import js.html.Event;
 import js.html.MouseEvent;
-import js.html.Node;
-import virdomort.VNode;
-import virdomort.dom.Dom.ve;
-import virdomort.dom.Dom.vt;
+import virdomort.dom.Dom.*;
 using virdomort.dom.Dom;
 
 class Main {

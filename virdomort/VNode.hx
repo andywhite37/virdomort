@@ -57,6 +57,13 @@ abstract VNode<TRef>(VNodeEnum<TRef>) {
     }
   }
 
+  public function getRef() : TRef {
+    return switch this {
+      case VText(v) : v.ref;
+      case VElement(v) : v.ref;
+    };
+  }
+
   public function setRef(ref) {
     switch this {
       case VText(v) : v.ref = ref;
