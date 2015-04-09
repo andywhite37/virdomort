@@ -6,37 +6,34 @@ class Diff {
 
     patch.isVText = vold.isVText() && vnew.isVText();
     if (patch.isVText) {
-      return getTextPatch(vold, vnew, patch);
+      return fillVTextPatch(vold.toVText(), vnew.toVText(), patch);
     }
 
     patch.isVElement = vold.isVElement() && vnew.isVElement();
     if (patch.isVElement) {
-      return getElementPatch(vold, vnew, patch);
+      return fillVElementPatch(vold.toVElement(), vnew.toVElement(), patch);
     }
 
-    patch.isPatchable = false;
-
     return patch;
   }
 
-  public static function getTextPatch<TRef>(vold : VNode<TRef>, vnew : VNode<TRef>, patch : Patch<TRef>) : Patch<TRef> {
-    var voldText = vold.toVText().text;
-    var vnewText = vnew.toVText().text;
+  static function fillVTextPatch<TRef>(vold : VText<TRef>, vnew : VText<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     patch.isPatchable = true;
-    patch.hasChanges = voldText != vnewText;
-    patch.newText = vnewText;
+    patch.hasChanges = vold.text != vnew.text;
+    patch.changedText = vnew.text;
     return patch;
   }
 
-  public static function getElementPatch<TRef>(vold : VNode<TRef>, vnew : VNode<TRef>, patch : Patch<TRef>) : Patch<TRef> {
-    patch.isPatchable = isElementPatchable(vold, vnew);
+  static function fillVElementPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
+    patch.isPatchable = isVElementPatchable(vold, vnew);
+
     if (!patch.isPatchable) {
       return patch;
     }
 
-    getElementAttributesPatch(vold, vnew, patch);
-    getElementEventHandlersPatch(vold, vnew, patch);
-    getElementChildrenPatch(vold, vnew, patch);
+    fillVElementAttributesPatch(vold, vnew, patch);
+    fillVElementEventHandlersPatch(vold, vnew, patch);
+    fillVElementChildrenPatch(vold, vnew, patch);
 
     patch.hasChanges =
       patch.hasAttributeChanges ||
@@ -46,33 +43,21 @@ class Diff {
     return patch;
   }
 
-  public static function isElementPatchable<TRef>(vnode1 : VNode<TRef>, vnode2 : VNode<TRef>) : Bool {
-    if (vnode1.isVElement() && vnode2.isVElement()) {
-      var velement1 = vnode1.toVElement();
-      var velement2 = vnode2.toVElement();
+  static function isVElementPatchable<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>) : Bool {
+    if (vold.key != null && vnew.key != null && vold.key == vnew.key) {
+      return true;
+    }
 
-      var key1 = velement1.key;
-      var key2 = velement2.key;
-
-      if (velement1.key != null && velement2.key != null && velement1.key == velement2.key) {
-        return true;
-      }
-
-      var tag1 = velement1.tag;
-      var tag2 = velement2.tag;
-      var ns1 = velement1.namespace;
-      var ns2 = velement2.namespace;
-
-      if (tag1 == tag2 && ns1 == ns2) {
-        return true;
-      }
+    if (vold.tag == vnew.tag && vold.namespace == vnew.namespace) {
+      return true;
     }
 
     return false;
   }
 
-  public static function getElementAttributesPatch<TRef>(vold : VNode<TRef>, vnew : VNode<TRef>, patch : Patch<TRef>) : Patch<TRef> {
+  static function fillVElementAttributesPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff attributes here
+    //for (oldKey in vold.
 
     patch.hasAttributeChanges =
       patch.hasAddedAttributes || patch.hasRemovedAttributes || patch.hasChangedAttributes;
@@ -80,17 +65,16 @@ class Diff {
     return patch;
   }
 
-  public static function getElementEventHandlersPatch<TRef>(vold : VNode<TRef>, vnew : VNode<TRef>, patch : Patch<TRef>) : Patch<TRef> {
+  static function fillVElementEventHandlersPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff event handlers here
 
     patch.hasEventHandlerChanges =
       patch.hasAddedEventHandlers || patch.hasRemovedEventHandlers || patch.hasChangedEventHandlers;
 
     return patch;
-    return patch;
   }
 
-  public static function getElementChildrenPatch<TRef>(vold : VNode<TRef>, vnew : VNode<TRef>, patch : Patch<TRef>) : Patch<TRef> {
+  static function fillVElementChildrenPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff children here
 
     patch.hasChildrenChanges =

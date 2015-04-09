@@ -21,6 +21,9 @@ abstract ValOrFunc<TValue>(ValOrFuncEnum<TValue>) {
   }
 
   public function getValue() : TValue {
+    if (this == null)
+      return null;
+
     return switch this {
       case Value(v) : v;
       case Func(f) : f();

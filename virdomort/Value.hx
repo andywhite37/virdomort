@@ -9,7 +9,7 @@ enum ValueEnum {
   VBool(v : Bool);
   VString(v : String);
   VDate(v : Date);
-  VStrings(v : Array<String>);
+  VStringArray(v : Array<String>);
   VStringMap(v : Map<String, String>);
 }
 
@@ -44,8 +44,8 @@ abstract Value(ValueEnum) {
   }
 
   @:from
-  public static function fromStrings(v : Array<String>) : Value {
-    return new Value(VStrings(v));
+  public static function fromStringArray(v : Array<String>) : Value {
+    return new Value(VStringArray(v));
   }
 
   @:from
@@ -53,24 +53,73 @@ abstract Value(ValueEnum) {
     return new Value(VStringMap(v));
   }
 
-  public function toValue() : Dynamic {
-    return switch this {
-      case VNone: null;
-      case VInt(v) : v;
-      case VFloat(v) : v;
-      case VBool(v) : v;
-      case VString(v) : v;
-      case VDate(v) : v;
-      case VStrings(v) : v;
-      case VStringMap(v) : v;
-    };
-  }
-
   public function isNone() : Bool {
     return switch this {
       case VNone : true;
       case _ : false;
     }
+  }
+
+  public function isInt() : Bool {
+    return switch this {
+      case VInt(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function isFloat() : Bool {
+    return switch this {
+      case VFloat(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function isBool() : Bool {
+    return switch this {
+      case VBool(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function isString() : Bool {
+    return switch this {
+      case VString(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function isDate() : Bool {
+    return switch this {
+      case VDate(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function isStringArray() : Bool {
+    return switch this {
+      case VStringArray(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function isStringMap() : Bool {
+    return switch this {
+      case VStringMap(v) : true;
+      case _ : false;
+    };
+  }
+
+  public function toValue() : Dynamic {
+    return switch this {
+      case VNone : null;
+      case VInt(v) : v;
+      case VFloat(v) : v;
+      case VBool(v) : v;
+      case VString(v) : v;
+      case VDate(v) : v;
+      case VStringArray(v) : v;
+      case VStringMap(v) : v;
+    };
   }
 
   @:to
@@ -104,7 +153,7 @@ abstract Value(ValueEnum) {
       case VFloat(v) : v != 0.0;
       case VString(v) : v != null && v != "";
       case VBool(v) : v;
-      case _ : throw new Error('Cannot convert value to Float');
+      case _ : throw new Error('Cannot convert value to Bool');
     };
   }
 
@@ -117,7 +166,7 @@ abstract Value(ValueEnum) {
       case VBool(v) : Std.string(v);
       case VDate(v) : v.toString();
       case VString(v) : v;
-      case VStrings(v) : v.join(" ");
+      case VStringArray(v) : v.join(" ");
       case VStringMap(v) : throw new Error("Cannot convert value to String");
     };
   }
@@ -131,10 +180,10 @@ abstract Value(ValueEnum) {
   }
 
   @:to
-  public function toStrings() : Array<String> {
+  public function toStringArray() : Array<String> {
     return switch this {
-      case VStrings(v) : v;
-      case _: throw new Error("Cannot convert value to Array<String>");
+      case VStringArray(v) : v;
+      case _ : throw new Error("Cannot convert value to Array<String>");
     };
   }
 

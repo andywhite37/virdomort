@@ -10,12 +10,13 @@ import virdomort.VNode;
 import virdomort.VElement;
 import virdomort.VText;
 
-class Dom {
-  public static var V_ID_KEY(default, never) = "classes";
+class VDom {
+  public static var V_ID_KEY(default, never) = "id";
   public static var V_CLASSES_KEY(default, never) = "classes";
   public static var V_STYLES_KEY(default, never) = "styles";
-  public static var R_CLASS_NAME_KEY(default, never) = "className";
-  public static var R_STYLE_KEY(default, never) = "style";
+  public static var ID_KEY(default, never) = "id";
+  public static var CLASS_NAME_KEY(default, never) = "className";
+  public static var STYLE_KEY(default, never) = "style";
 
   public static function createNode(vnode : VNode<Node>) : Node {
     if (vnode.isVText()) {
@@ -26,20 +27,20 @@ class Dom {
   }
 
   static function createText(vtext : VText<Node>) : Node {
-    var rtext = Browser.document.createTextNode(vtext.text);
-    vtext.ref = rtext;
-    return rtext;
+    var text = Browser.document.createTextNode(vtext.text);
+    vtext.ref = text;
+    return text;
   }
 
   static function createElement(velement : VElement<Node>) : Node {
-    var relement : Element = cast Browser.document.createElement(velement.tag);
-    velement.ref = relement;
+    var element : Element = cast Browser.document.createElement(velement.tag);
+    velement.ref = element;
 
-    setAttributes(relement, velement.attributes);
-    setEventHandlers(relement, velement.events);
-    setChildren(relement, velement.children);
+    setAttributes(element, velement.attributes);
+    setEventHandlers(element, velement.events);
+    setChildren(element, velement.children);
 
-    return relement;
+    return element;
   }
 
   public static function updateNode(vold : VNode<Node>, vnew : VNode<Node>) : Void {
@@ -72,7 +73,7 @@ class Dom {
 
   static function updateText(vold : VNode<Node>, vnew : VNode<Node>, patch : Patch<Node>) : Void {
     var textOld : Text = cast vold.toVText().ref;
-    textOld.nodeValue = patch.newText;
+    textOld.nodeValue = patch.changedText;
     vnew.setRef(textOld);
   }
 
@@ -165,12 +166,12 @@ class Dom {
   }
 
   public static function ve(
-      ?tag : ValOrFunc<String>,
-      ?key : ValOrFunc<String>,
-      ?namespace : ValOrFunc<String>,
-      ?attributes : ValOrFunc<Map<String, Value>>,
-      ?events : ValOrFunc<Map<String, EventHandler>>,
-      ?children : ValOrFunc<Array<VNode<Node>>>) : VElement<Node> {
+    ?tag : ValOrFunc<String>,
+    ?key : ValOrFunc<String>,
+    ?namespace : ValOrFunc<String>,
+    ?attributes : ValOrFunc<Map<String, Value>>,
+    ?events : ValOrFunc<Map<String, EventHandler>>,
+    ?children : ValOrFunc<Array<VNode<Node>>>) : VElement<Node> {
     return new VElement<Node>(tag.getValue(), key.getValue(), namespace.getValue(), attributes.getValue(), events.getValue(), children.getValue());
   }
 
@@ -200,16 +201,15 @@ class Dom {
   }
 
   public static function clc(
-      velement : VElement<Node>,
-      conditional : ValOrFunc<Bool>,
-      classNameIfTrue : ValOrFunc<String>,
-      ?classNameIfFalse : ValOrFunc<String>) : VElement<Node> {
-
+    velement : VElement<Node>,
+    conditional : ValOrFunc<Bool>,
+    classNameIfTrue : ValOrFunc<String>,
+    ?classNameIfFalse : ValOrFunc<String>) : VElement<Node> {
     if (conditional.getValue()) {
       return cl(velement, classNameIfTrue);
     } else {
-      if (classNameIfFalse != null || classNameIfFalse != "") {
-        return cl(velement, classNameIfFalse);
+      if (classNameIfFalse != null) {
+        return cl(velement, classNameIfFalse.getValue());
       } else {
         return velement;
       }
@@ -232,15 +232,15 @@ class Dom {
 
   public static function stc(
       velement : VElement<Node>,
-      name : String,
+      name : ValOrFunc<String>,
       conditional : ValOrFunc<Bool>,
       valueIfTrue : ValOrFunc<String>,
       ?valueIfFalse : ValOrFunc<String>) {
     if (conditional.getValue()) {
-      return st(velement, name, valueIfTrue);
+      return st(velement, name.getValue(), valueIfTrue);
     } else {
-      if (valueIfFalse != null && valueIfFalse != "") {
-        return st(velement, name, valueIfFalse);
+      if (valueIfFalse != null) {
+        return st(velement, name.getValue(), valueIfFalse.getValue());
       } else {
         return velement;
       }
@@ -251,7 +251,7 @@ class Dom {
     if (velement.attributes[V_CLASSES_KEY] == null) {
       velement.attributes[V_CLASSES_KEY] = new Array<String>();
     }
-    return velement.attributes[V_CLASSES_KEY].toStrings();
+    return velement.attributes[V_CLASSES_KEY].toStringArray();
   }
 
   static function getClassName(velement : VElement<Node>) : String {
@@ -265,64 +265,62 @@ class Dom {
     return velement.attributes[V_STYLES_KEY].toStringMap();
   }
 
-  static function setAttribute(relement : Element, key : String, value : Value) {
+  static function setAttribute(element : Element, key : String, value : Value) {
     if (key == V_CLASSES_KEY) {
-      var className = value.toStrings().join(" ");
-      Reflect.setField(relement, R_CLASS_NAME_KEY, className);
+      var className = value.toStringArray().join(" ");
+      element.className = className;
       return;
     }
 
     if (key == V_STYLES_KEY) {
       var styles = value.toStringMap();
-      var el : Element = cast relement;
       for (styleKey in styles.keys()) {
-        Reflect.setField(el.style, styleKey, styles[styleKey]);
+        element.style.setProperty(styleKey, styles[styleKey]);
       }
       return;
     }
 
-    var value = value.toValue();
-    Reflect.setField(relement, "key", value);
+    Reflect.setField(element, key, value.toValue());
   }
 
-  static function setAttributes(relement : Element, attributes : Map<String, Value>) {
+  static function setAttributes(element : Element, attributes : Map<String, Value>) {
     for (key in attributes.keys()) {
-      setAttribute(relement, key, attributes[key]);
+      setAttribute(element, key, attributes[key]);
     }
   }
 
-  static function removeAttribute(relement : Element, key : String) {
+  static function removeAttribute(element : Element, key : String) {
     if (key == V_CLASSES_KEY) {
-      relement.removeAttribute(R_CLASS_NAME_KEY);
+      element.removeAttribute(CLASS_NAME_KEY);
       return;
     }
 
     if (key == V_STYLES_KEY) {
-      relement.removeAttribute(R_STYLE_KEY);
+      element.removeAttribute(STYLE_KEY);
       return;
     }
 
-    Reflect.deleteField(relement, key);
+    Reflect.deleteField(element, key);
   }
 
-  static function setEventHandler(relement : Element, key : String, eventHandler : EventHandler) {
-    Reflect.setField(relement, 'on$key', eventHandler);
+  static function setEventHandler(element : Element, key : String, eventHandler : EventHandler) {
+    Reflect.setField(element, 'on$key', eventHandler);
   }
 
-  static function setEventHandlers(relement : Element, events : Map<String, EventHandler>) {
+  static function setEventHandlers(element : Element, events : Map<String, EventHandler>) {
     for (key in events.keys()) {
-      setEventHandler(relement, key, events[key]);
+      setEventHandler(element, key, events[key]);
     }
   }
 
-  static function removeEventHandler(relement : Element, key: String) {
-    Reflect.deleteField(relement, key);
+  static function removeEventHandler(element : Element, key: String) {
+    element.removeAttribute(key);
   }
 
-  static function setChildren(relement : Element, children : Array<VNode<Node>>) {
-    for (vchild in children) {
-      var rchild = createNode(vchild);
-      relement.appendChild(rchild);
+  static function setChildren(element : Element, vnodes : Array<VNode<Node>>) {
+    for (vnode in vnodes) {
+      var node = createNode(vnode);
+      element.appendChild(node);
     }
   }
 }

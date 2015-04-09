@@ -7,7 +7,7 @@ class Patch<TRef> {
 
   // VText
   public var isVText : Bool = false;
-  public var newText : String = null;
+  public var changedText : String = null;
 
   // VElement
   public var isVElement : Bool = false;
