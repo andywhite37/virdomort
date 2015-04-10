@@ -57,7 +57,6 @@ class Diff {
 
   static function fillVElementAttributesPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff attributes here
-    //for (oldKey in vold.
 
     patch.hasAttributeChanges =
       patch.hasAddedAttributes || patch.hasRemovedAttributes || patch.hasChangedAttributes;
