@@ -2,4 +2,10 @@
 -main examples.basic.Main
 -js examples/basic/main.js
 
+--next
+
 # Tests
+-lib utest
+-main test.Main
+-js test/runner.js
+-cmd node test/runner.js

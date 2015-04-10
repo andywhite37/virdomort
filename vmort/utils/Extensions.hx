@@ -8,7 +8,8 @@ class Extensions {
   }
 
   public static function contains<T>(array : Array<T>, value : T, ?predicate : T -> T -> Bool) : Bool {
-    if (predicate == null) predicate = equals;
+    if (predicate == null)
+      predicate = equals;
 
     return array.find(function(a) {
       return predicate(a, value);
@@ -16,9 +17,7 @@ class Extensions {
   }
 
   public static function unique<T>(array : Array<T>, ?predicate : T -> T -> Bool) : Array<T> {
-    if (predicate == null) predicate = equals;
-
-    return array.fold(function(acc : Array<T>, a : T) {
+    return array.fold(function(a : T, acc : Array<T>) {
       if (!contains(acc, a, predicate)) {
         acc.push(a);
       }
@@ -26,25 +25,35 @@ class Extensions {
     }, []);
   }
 
-  public static function intersect<T>(left : Array<T>, right : Array<T>, ?predicate : T -> T -> Bool) : Array<T> {
-    if (predicate == null) predicate = equals;
+  public static function intersection<T>(left : Array<T>, right : Array<T>, ?predicate : T -> T -> Bool) : Array<T> {
+    var uleft = unique(left, predicate);
+    var uright = unique(right, predicate);
 
-    return unique(left).fold(function(acc : Array<T>, a : T) {
+    return uleft.fold(function(l : T, acc : Array<T>) {
+      if (contains(uright, l, predicate)) {
+        acc.push(l);
+      }
+      return acc;
     }, []);
   }
 
   public static function difference<T>(left : Array<T>, right : Array<T>, ?predicate : T -> T -> Bool) : Array<T> {
-    if (predicate == null) predicate = equals;
-    var result = [];
+    var uleft = unique(left, predicate);
+    var uright = unique(right, predicate);
 
-    var intersection = intersect(left, right, predicate);
+    return uleft.fold(function(l : T, acc : Array<T>) {
+      if (!contains(uright, l, predicate)) {
+        acc.push(l);
+      }
+      return acc;
+    }, []);
+  }
 
-    var leftu = unique(left, predicate);
-
-    for (l in leftu) {
-
-    }
-
-
+  public static function diff<T>(left : Array<T>, right : Array<T>, ?predicate : T -> T -> Bool) {
+    return {
+      left: difference(left, right, predicate),
+      both: intersection(left, right, predicate),
+      right: difference(right, left, predicate)
+    };
   }
 }
