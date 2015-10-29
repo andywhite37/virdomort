@@ -1,3 +1,6 @@
 package vmort;
 
-typedef EventHandler = Dynamic -> Void;
+import haxe.Constraints.Function;
+
+//typedef EventHandler = Dynamic -> Void;
+typedef EventHandler = Function;

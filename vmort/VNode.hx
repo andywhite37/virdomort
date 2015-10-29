@@ -2,72 +2,66 @@ package vmort;
 
 import js.Error;
 
-enum VNodeEnum<TRef> {
-  VElement(element : VElement<TRef>);
-  VText(text : VText<TRef>);
+enum VNodeType<TRef> {
+  VNElement(element : VElement<TRef>);
+  VNText(text : VText<TRef>);
 }
 
-abstract VNode<TRef>(VNodeEnum<TRef>) {
-  public inline function new(v : VNodeEnum<TRef>) {
-    this = v;
+abstract VNode<TRef>(VNodeType<TRef>) {
+  public function new(vne : VNodeType<TRef>) {
+    this = vne;
   }
 
-  @:from
-  public static function fromVElement<TRef>(v : VElement<TRef>) : VNode<TRef> {
-    return new VNode(VElement(v));
-  }
+  @:from public static function fromVNodeType<TRef>(vne : VNodeType<TRef>) : VNode<TRef> return new VNode<TRef>(vne);
+  @:from public static function fromVElement<TRef>(v : VElement<TRef>) : VNode<TRef> return VNElement(v);
+  @:from public static function fromVText<TRef>(v : VText<TRef>) : VNode<TRef> return VNText(v);
+  @:from public static function fromString<TRef>(v : String) : VNode<TRef> return new VText(v);
 
-  @:from
-  public static function fromVText<TRef>(v : VText<TRef>) : VNode<TRef> {
-    return new VNode(VText(v));
-  }
-
-  @:from
-  public static function fromString<TRef>(v : String) : VNode<TRef> {
-    return new VNode(VText(new VText(v)));
-  }
-
-  public function isVElement() : Bool {
-    return switch this {
-      case VElement(v): true;
-      case _ : false;
-    };
-  }
-
-  public function isVText() : Bool {
-    return switch this {
-      case VText(v) : true;
-      case _ : false;
-    }
+  @:to public function toVNodeType() : VNodeType<TRef> {
+    return this;
   }
 
   @:to
   public function toVElement() : VElement<TRef> {
     return switch this {
-      case VElement(v) : v;
-      case _ : throw new Error("Cannot convert VNode to VElement");
+      case VNElement(v) : v;
+      case VNText(_) : throw new Error("Cannot convert VText to VElement");
     }
   }
 
   @:to
   public function toVText() : VText<TRef> {
     return switch this {
-      case VText(v) : v;
-      case _ : throw new Error("Cannot convert VNode to VText");
+      case VNText(v) : v;
+      case VNElement(_) : throw new Error("Cannot convert VElement to VText");
+    }
+  }
+
+  public function isVElement() : Bool {
+    return switch this {
+      case VNElement(v): true;
+      case _ : false;
+    };
+  }
+
+  public function isVText() : Bool {
+    return switch this {
+      case VNText(v) : true;
+      case _ : false;
     }
   }
 
   public function getRef() : TRef {
     return switch this {
-      case VText(v) : v.ref;
-      case VElement(v) : v.ref;
+      case VNElement(v) : v.ref;
+      case VNText(v) : v.ref;
     };
   }
 
   public function setRef(ref) {
     switch this {
-      case VText(v) : v.ref = ref;
-      case VElement(v) : v.ref = ref;
+      case VNElement(v) : v.setRef(ref);
+      case VNText(v) : v.setRef(ref);
     }
   }
 }

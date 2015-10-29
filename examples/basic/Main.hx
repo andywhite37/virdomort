@@ -3,7 +3,8 @@ package examples.basic;
 import js.Browser;
 import js.html.MouseEvent;
 import vmort.dom.VDom.*;
-using vmort.dom.VDom;
+using vmort.dom.VElements;
+using vmort.dom.VNodes;
 
 class Main {
   static function render(count : Int) {
@@ -17,27 +18,25 @@ class Main {
       trace("click");
     };
 
-    var vnode = ve("div")
-      .cl("test-class")
-      .cln("test-class-1 test-class-2")
-      .clc(true, "class-true-1", "class-false-1")
-      .clc(false, "class-true-2", "class-false-2")
-      .cs([
-        ve("span").st("color", "blue").c("My Span"),
-        ve("br"),
-        ve("span").stc("background-color", true, "#ddd").c("My Span 2"),
-        ve("br"),
+    var vnode = createElement("div")
+      .addClass("test-class test-class-1 test-class-2")
+      .addClassIf(true, "class-true-1")
+      .addClassIf(false, "class-true-2", "class-false-2")
+      .addChildren([
+        createText("Some text"),
+        createElement("span").addStyle("color", "blue").addChild("My span text"),
+        createElement("br"),
+        createElement("span").addStyleIf("background-color", true, "#ddd").addChild("My span 2 text"),
+        createElement("br"),
         "Hello, world!",
-        ve("hr"),
-        ve("button").on("click", onClick).c("Click me")
+        createElement("hr"),
+        createElement("button").addEvent("click", onClick).addChild("Click me")
       ]);
 
     trace(vnode);
 
     var root = Browser.document.getElementById("root");
-
-    var node = VDom.createNode(vnode);
-
+    var node = vnode.reify();
     root.appendChild(node);
   }
 }

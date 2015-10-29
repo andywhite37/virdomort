@@ -1,15 +1,20 @@
-package vmort.utils;
+package vmort.util;
 
+import vmort.util.Objects;
 using Lambda;
 
-class Extensions {
-  public static function equals<T>(a : T, b : T) : Bool {
-    return a == b;
+class Arrays {
+  public static function isEmpty<T>(array : Array<T>) : Bool {
+    return array == null || array.length == 0;
+  }
+
+  public static function isFull<T>(array : Array<T>) : Bool {
+    return !isEmpty(array);
   }
 
   public static function contains<T>(array : Array<T>, value : T, ?predicate : T -> T -> Bool) : Bool {
     if (predicate == null)
-      predicate = equals;
+      predicate = Objects.equals;
 
     return array.find(function(a) {
       return predicate(a, value);

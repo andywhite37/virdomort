@@ -35,11 +35,6 @@ class Diff {
     fillVElementEventHandlersPatch(vold, vnew, patch);
     fillVElementChildrenPatch(vold, vnew, patch);
 
-    patch.hasChanges =
-      patch.hasAttributeChanges ||
-      patch.hasEventHandlerChanges ||
-      patch.hasChildrenChanges;
-
     return patch;
   }
 
@@ -57,28 +52,16 @@ class Diff {
 
   static function fillVElementAttributesPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff attributes here
-
-    patch.hasAttributeChanges =
-      patch.hasAddedAttributes || patch.hasRemovedAttributes || patch.hasChangedAttributes;
-
     return patch;
   }
 
   static function fillVElementEventHandlersPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff event handlers here
-
-    patch.hasEventHandlerChanges =
-      patch.hasAddedEventHandlers || patch.hasRemovedEventHandlers || patch.hasChangedEventHandlers;
-
     return patch;
   }
 
   static function fillVElementChildrenPatch<TRef>(vold : VElement<TRef>, vnew : VElement<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     // TODO: diff children here
-
-    patch.hasChildrenChanges =
-      patch.hasAddedChildren || patch.hasRemovedChildren || patch.hasMovedChildren;
-
     return patch;
   }
 }

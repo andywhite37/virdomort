@@ -1,7 +1,9 @@
 package test.vmort.utils;
 
 import utest.Assert;
-using vmort.utils.Extensions;
+using vmort.util.Arrays;
+using vmort.util.Objects;
+using vmort.util.Iterators;
 
 class ExtensionsTest {
   public function new() {
