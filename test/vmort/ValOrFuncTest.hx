@@ -8,13 +8,13 @@ class ValOrFuncTest {
 
   public function testVal() {
     var test = ValOrFunc.fromValue("test");
-    Assert.same("test", test.getValue());
+    Assert.same("test", test.toValue());
   }
 
   public function testFunc() {
     var test = ValOrFunc.fromFunc(function() {
       return "test";
     });
-    Assert.same("test", test.getValue());
+    Assert.same("test", test.toValue());
   }
 }

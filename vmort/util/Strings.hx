@@ -12,7 +12,7 @@ class Strings {
     return !isEmpty(input);
   }
 
-  public static function splitTrim(input : String, ?delimiter : String = " \t") : Array<String> {
+  public static function trimSplit(input : String, ?delimiter : String = " \t") : Array<String> {
     var regex = new EReg(delimiter, "gi");
     return regex.split(input)
       .map(function(part) {

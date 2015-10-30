@@ -6,6 +6,7 @@ class VText<TRef> {
 
   public function new(text : String) {
     this.text = text;
+    this.ref = null;
   }
 
   public function setText(text : String) : VText<TRef> {

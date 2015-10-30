@@ -65,9 +65,6 @@ Lambda.find = function(it,f) {
 Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
-Reflect.setField = function(o,field,value) {
-	o[field] = value;
-};
 Reflect.deleteField = function(o,field) {
 	if(!Object.prototype.hasOwnProperty.call(o,field)) return false;
 	delete(o[field]);
@@ -98,6 +95,9 @@ StringBuf.prototype = {
 };
 var StringTools = function() { };
 StringTools.__name__ = true;
+StringTools.startsWith = function(s,start) {
+	return s.length >= start.length && HxOverrides.substr(s,0,start.length) == start;
+};
 StringTools.isSpace = function(s,pos) {
 	var c = HxOverrides.cca(s,pos);
 	return c > 8 && c < 14 || c == 32;
@@ -122,16 +122,17 @@ examples_basic_Main.__name__ = true;
 examples_basic_Main.render = function(count) {
 };
 examples_basic_Main.main = function() {
-	var myString = "Hello";
-	var onClick = function(e) {
-		e.preventDefault();
-		console.log("click");
-	};
-	var vnode = vmort_dom_VElements.addClassIf(vmort_dom_VElements.addClassIf(vmort_dom_VElements.addClass(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("div")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("test-class test-class-1 test-class-2")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-true-1")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(false),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-true-2"),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-false-2")).addChildren([vmort__$VNode_VNode_$Impl_$.fromVText(vmort_dom_VDom.createText(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("Some text"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VElements.addStyle(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("color"),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("blue")).addChild(vmort__$VNode_VNode_$Impl_$.fromString("My span text"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("br"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VElements.addStyleIf(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("background-color"),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("#ddd")).addChild(vmort__$VNode_VNode_$Impl_$.fromString("My span 2 text"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("br"))),vmort__$VNode_VNode_$Impl_$.fromString("Hello, world!"),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("hr"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.createElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("button")).addEvent("click",onClick).addChild(vmort__$VNode_VNode_$Impl_$.fromString("Click me")))]);
-	console.log(vnode);
-	var root = window.document.getElementById("root");
-	var node = vmort_dom_VNodes.reify(vmort__$VNode_VNode_$Impl_$.fromVElement(vnode));
-	root.appendChild(node);
+	var rootElement = window.document.getElementById("root");
+	var vnode1 = vmort_dom_VElements.clsif(vmort_dom_VElements.clsif(vmort_dom_VElements.cls(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("div")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("test-class test-class-1 test-class-2")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-true-1")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(false),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-true-2"),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("class-false-2")).append([vmort__$VNode_VNode_$Impl_$.fromVText(vmort_dom_VDom.text(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("Some text"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VElements.css(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("color"),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("blue")).child(vmort__$VNode_VNode_$Impl_$.fromString("My span text"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("br"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VElements.cssif(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(true),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("background-color"),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("#ddd")).child(vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("input"))))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("br"))),vmort__$VNode_VNode_$Impl_$.fromString("Hello, world!"),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("hr"))),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("button")).on("click",examples_basic_Main.onClick).child(vmort__$VNode_VNode_$Impl_$.fromString("Click me")))]);
+	console.log(vnode1);
+	var node1 = vmort_dom_VNodes.reify(vmort__$VNode_VNode_$Impl_$.fromVElement(vnode1));
+	var vnode2 = vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("div")).append([vmort__$VNode_VNode_$Impl_$.fromString("My text content"),vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("span")).append([vmort__$VNode_VNode_$Impl_$.fromVElement(vmort_dom_VDom.el(vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("input")))]))]);
+	var node2 = vmort_dom_VNodes.reify(vmort__$VNode_VNode_$Impl_$.fromVElement(vnode2));
+	rootElement.appendChild(node1);
+	rootElement.appendChild(node2);
+};
+examples_basic_Main.onClick = function(e) {
+	console.log("click");
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
@@ -163,20 +164,12 @@ haxe_ds_StringMap.prototype = {
 		if(__map_reserved[key] != null) return this.getReserved(key);
 		return this.h[key];
 	}
-	,exists: function(key) {
-		if(__map_reserved[key] != null) return this.existsReserved(key);
-		return this.h.hasOwnProperty(key);
-	}
 	,setReserved: function(key,value) {
 		if(this.rh == null) this.rh = { };
 		this.rh["$" + key] = value;
 	}
 	,getReserved: function(key) {
 		if(this.rh == null) return null; else return this.rh["$" + key];
-	}
-	,existsReserved: function(key) {
-		if(this.rh == null) return false;
-		return this.rh.hasOwnProperty("$" + key);
 	}
 	,keys: function() {
 		var _this = this.arrayKeys();
@@ -296,7 +289,6 @@ vmort_Diff.getPatch = function(vold,vnew) {
 };
 vmort_Diff.fillVTextPatch = function(vold,vnew,patch) {
 	patch.isPatchable = true;
-	patch.hasChanges = vold.text != vnew.text;
 	patch.changedText = vnew.text;
 	return patch;
 };
@@ -335,7 +327,6 @@ var vmort_Patch = function() {
 	this.changedText = null;
 	this.isVElement = false;
 	this.isVText = false;
-	this.hasChanges = false;
 	this.isPatchable = false;
 };
 vmort_Patch.__name__ = true;
@@ -379,14 +370,22 @@ vmort_Patch.prototype = {
 	,hasChildrenDiffs: function() {
 		return this.hasAddedChildren() || this.hasRemovedChildren() || this.hasMovedChildren();
 	}
+	,hasChanges: function() {
+		if(this.isVText) return this.hasChangedText(); else if(this.isVElement) return this.hasAttributeDiffs() || this.hasEventDiffs() || this.hasChildrenDiffs(); else return false;
+	}
 };
-var vmort_VElement = function(tag,key,$namespace,attributes,events,children) {
-	if(tag != null) this.tag = tag; else this.tag = "div";
-	this.key = key;
-	this["namespace"] = $namespace;
-	if(attributes != null) this.attributes = attributes; else this.attributes = new haxe_ds_StringMap();
-	if(events != null) this.events = events; else this.events = new haxe_ds_StringMap();
-	if(children != null) this.children = children; else this.children = [];
+var vmort_VElement = function(tag,attributes,events,children) {
+	this.tag = vmort_VElement.DEFAULT_TAG;
+	this.key = vmort_VElement.DEFAULT_KEY;
+	this["namespace"] = vmort_VElement.DEFAULT_NAMESPACE;
+	this.attributes = new haxe_ds_StringMap();
+	this.events = new haxe_ds_StringMap();
+	this.children = [];
+	this.ref = null;
+	if(tag != null) this.setTag(tag);
+	if(attributes != null) this.addAttributes(attributes);
+	if(events != null) this.addEvents(events);
+	if(children != null) this.addChildren(children);
 };
 vmort_VElement.__name__ = true;
 vmort_VElement.prototype = {
@@ -398,34 +397,51 @@ vmort_VElement.prototype = {
 		this.key = key;
 		return this;
 	}
-	,setRef: function(ref) {
-		this.ref = ref;
-		return this;
-	}
 	,setNamespace: function($namespace) {
 		this["namespace"] = $namespace;
 		return this;
 	}
 	,addAttribute: function(name,value) {
-		this.attributes.set(name,value);
-		return this;
+		if(name == vmort_VElement.KEY_ATTRIBUTE_NAME) return this.setKey(vmort__$Value_Value_$Impl_$.toString(value)); else if(vmort_util_Arrays.contains(vmort_VElement.NAMESPACE_ATTRIBUTE_NAMES,name)) return this.setNamespace(vmort__$Value_Value_$Impl_$.toString(value)); else {
+			this.attributes.set(name,value);
+			return this;
+		}
 	}
-	,addAttributes: function(map) {
-		var $it0 = map.keys();
+	,attr: function(name,value) {
+		return this.addAttribute(name,value);
+	}
+	,addAttributes: function(attributes) {
+		var $it0 = attributes.keys();
 		while( $it0.hasNext() ) {
-			var key = $it0.next();
-			this.addAttribute(key,__map_reserved[key] != null?map.getReserved(key):map.h[key]);
+			var name = $it0.next();
+			this.addAttribute(name,__map_reserved[name] != null?attributes.getReserved(name):attributes.h[name]);
 		}
 		return this;
 	}
+	,attrs: function(attributes) {
+		return this.addAttributes(attributes);
+	}
 	,addEvent: function(name,eventHandler) {
-		if(!this.events.exists(name)) this.events.set(name,[]);
-		this.events.get(name).push(eventHandler);
+		this.events.set(name,eventHandler);
+		return this;
+	}
+	,on: function(name,eventHandler) {
+		return this.addEvent(name,eventHandler);
+	}
+	,addEvents: function(events) {
+		var $it0 = events.keys();
+		while( $it0.hasNext() ) {
+			var name = $it0.next();
+			this.addEvent(name,__map_reserved[name] != null?events.getReserved(name):events.h[name]);
+		}
 		return this;
 	}
 	,addChild: function(child) {
 		this.children.push(child);
 		return this;
+	}
+	,child: function(child) {
+		return this.addChild(child);
 	}
 	,addChildren: function(children) {
 		var _g = 0;
@@ -434,6 +450,13 @@ vmort_VElement.prototype = {
 			++_g;
 			this.addChild(child);
 		}
+		return this;
+	}
+	,append: function(children) {
+		return this.addChildren(children);
+	}
+	,setRef: function(ref) {
+		this.ref = ref;
 		return this;
 	}
 };
@@ -465,9 +488,8 @@ vmort__$VNode_VNode_$Impl_$.toVElement = function(this1) {
 	case 0:
 		var v = this1[2];
 		return v;
-	case 1:
-		throw new Error("Cannot convert VText to VElement");
-		break;
+	default:
+		throw new Error("Cannot convert VNode to VElement");
 	}
 };
 vmort__$VNode_VNode_$Impl_$.toVText = function(this1) {
@@ -475,9 +497,8 @@ vmort__$VNode_VNode_$Impl_$.toVText = function(this1) {
 	case 1:
 		var v = this1[2];
 		return v;
-	case 0:
-		throw new Error("Cannot convert VElement to VText");
-		break;
+	default:
+		throw new Error("Cannot convert VNode to VText");
 	}
 };
 vmort__$VNode_VNode_$Impl_$.isVElement = function(this1) {
@@ -522,6 +543,7 @@ vmort__$VNode_VNode_$Impl_$.setRef = function(this1,ref) {
 };
 var vmort_VText = function(text) {
 	this.text = text;
+	this.ref = null;
 };
 vmort_VText.__name__ = true;
 vmort_VText.prototype = {
@@ -534,23 +556,24 @@ vmort_VText.prototype = {
 		return this;
 	}
 };
-var vmort_ValOrFuncEnum = { __ename__ : true, __constructs__ : ["Value","Func"] };
-vmort_ValOrFuncEnum.Value = function(v) { var $x = ["Value",0,v]; $x.__enum__ = vmort_ValOrFuncEnum; $x.toString = $estr; return $x; };
-vmort_ValOrFuncEnum.Func = function(v) { var $x = ["Func",1,v]; $x.__enum__ = vmort_ValOrFuncEnum; $x.toString = $estr; return $x; };
+var vmort_ValOrFuncType = { __ename__ : true, __constructs__ : ["Value","Func"] };
+vmort_ValOrFuncType.Value = function(v) { var $x = ["Value",0,v]; $x.__enum__ = vmort_ValOrFuncType; $x.toString = $estr; return $x; };
+vmort_ValOrFuncType.Func = function(v) { var $x = ["Func",1,v]; $x.__enum__ = vmort_ValOrFuncType; $x.toString = $estr; return $x; };
 var vmort__$ValOrFunc_ValOrFunc_$Impl_$ = {};
 vmort__$ValOrFunc_ValOrFunc_$Impl_$.__name__ = true;
 vmort__$ValOrFunc_ValOrFunc_$Impl_$._new = function(valOrFunc) {
 	return valOrFunc;
 };
+vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValOrFuncType = function(v) {
+	return v;
+};
 vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue = function(v) {
-	var valOrFunc = vmort_ValOrFuncEnum.Value(v);
-	return valOrFunc;
+	return vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValOrFuncType(vmort_ValOrFuncType.Value(v));
 };
 vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromFunc = function(v) {
-	var valOrFunc = vmort_ValOrFuncEnum.Func(v);
-	return valOrFunc;
+	return vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValOrFuncType(vmort_ValOrFuncType.Func(v));
 };
-vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue = function(this1) {
+vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue = function(this1) {
 	if(this1 == null) return null;
 	switch(this1[1]) {
 	case 0:
@@ -561,47 +584,60 @@ vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue = function(this1) {
 		return f();
 	}
 };
-var vmort_ValueEnum = { __ename__ : true, __constructs__ : ["VInt","VFloat","VBool","VString","VDate","VStringArray","VStringMap","VNone"] };
-vmort_ValueEnum.VInt = function(v) { var $x = ["VInt",0,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VFloat = function(v) { var $x = ["VFloat",1,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VBool = function(v) { var $x = ["VBool",2,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VString = function(v) { var $x = ["VString",3,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VDate = function(v) { var $x = ["VDate",4,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VStringArray = function(v) { var $x = ["VStringArray",5,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VStringMap = function(v) { var $x = ["VStringMap",6,v]; $x.__enum__ = vmort_ValueEnum; $x.toString = $estr; return $x; };
-vmort_ValueEnum.VNone = ["VNone",7];
-vmort_ValueEnum.VNone.toString = $estr;
-vmort_ValueEnum.VNone.__enum__ = vmort_ValueEnum;
+vmort__$ValOrFunc_ValOrFunc_$Impl_$.toFunc = function(this1) {
+	if(this1 == null) return null;
+	switch(this1[1]) {
+	case 0:
+		var v = this1[2];
+		return function() {
+			return v;
+		};
+	case 1:
+		var f = this1[2];
+		return f;
+	}
+};
+var vmort_ValueType = { __ename__ : true, __constructs__ : ["VInt","VFloat","VBool","VString","VDate","VStringArray","VStringMap","VNone"] };
+vmort_ValueType.VInt = function(v) { var $x = ["VInt",0,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VFloat = function(v) { var $x = ["VFloat",1,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VBool = function(v) { var $x = ["VBool",2,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VString = function(v) { var $x = ["VString",3,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VDate = function(v) { var $x = ["VDate",4,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VStringArray = function(v) { var $x = ["VStringArray",5,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VStringMap = function(v) { var $x = ["VStringMap",6,v]; $x.__enum__ = vmort_ValueType; $x.toString = $estr; return $x; };
+vmort_ValueType.VNone = ["VNone",7];
+vmort_ValueType.VNone.toString = $estr;
+vmort_ValueType.VNone.__enum__ = vmort_ValueType;
 var vmort__$Value_Value_$Impl_$ = {};
 vmort__$Value_Value_$Impl_$.__name__ = true;
 vmort__$Value_Value_$Impl_$._new = function(ve) {
 	return ve;
 };
-vmort__$Value_Value_$Impl_$.fromValueEnum = function(ve) {
+vmort__$Value_Value_$Impl_$.fromValueType = function(ve) {
 	return vmort__$Value_Value_$Impl_$._new(ve);
 };
 vmort__$Value_Value_$Impl_$.fromInt = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VInt(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VInt(v));
 };
 vmort__$Value_Value_$Impl_$.fromFloat = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VFloat(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VFloat(v));
 };
 vmort__$Value_Value_$Impl_$.fromBool = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VBool(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VBool(v));
 };
 vmort__$Value_Value_$Impl_$.fromString = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VString(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VString(v));
 };
 vmort__$Value_Value_$Impl_$.fromDate = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VDate(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VDate(v));
 };
 vmort__$Value_Value_$Impl_$.fromStringArray = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VStringArray(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VStringArray(v));
 };
 vmort__$Value_Value_$Impl_$.fromStringMap = function(v) {
-	return vmort__$Value_Value_$Impl_$.fromValueEnum(vmort_ValueEnum.VStringMap(v));
+	return vmort__$Value_Value_$Impl_$.fromValueType(vmort_ValueType.VStringMap(v));
 };
-vmort__$Value_Value_$Impl_$.toValueEnum = function(this1) {
+vmort__$Value_Value_$Impl_$.toValueType = function(this1) {
 	return this1;
 };
 vmort__$Value_Value_$Impl_$.toInt = function(this1) {
@@ -823,22 +859,19 @@ vmort__$Value_Value_$Impl_$.isNone = function(this1) {
 };
 var vmort_dom_Elements = function() { };
 vmort_dom_Elements.__name__ = true;
-vmort_dom_Elements.addAttribute = function(element,key,value) {
-	if(key == vmort_dom_VElements.V_CLASSES_KEY) {
+vmort_dom_Elements.addAttribute = function(element,name,value) {
+	if(name == vmort_dom_VElements.V_CLASSES_ATTRIBUTE_NAME) {
 		var className = vmort__$Value_Value_$Impl_$.toStringArray(value).join(" ");
 		element.className = className;
-		return;
-	}
-	if(key == vmort_dom_VElements.V_STYLES_KEY) {
+	} else if(name == vmort_dom_VElements.V_STYLES_ATTRIBUTE_NAME) {
 		var styles = vmort__$Value_Value_$Impl_$.toStringMap(value);
 		var $it0 = styles.keys();
 		while( $it0.hasNext() ) {
 			var styleKey = $it0.next();
 			element.style.setProperty(styleKey,__map_reserved[styleKey] != null?styles.getReserved(styleKey):styles.h[styleKey]);
 		}
-		return;
-	}
-	Reflect.setField(element,key,vmort__$Value_Value_$Impl_$.toDynamic(value));
+	} else element.setAttribute(name,vmort__$Value_Value_$Impl_$.toString(value));
+	return element;
 };
 vmort_dom_Elements.addAttributes = function(element,attributes) {
 	var $it0 = attributes.keys();
@@ -846,59 +879,56 @@ vmort_dom_Elements.addAttributes = function(element,attributes) {
 		var key = $it0.next();
 		vmort_dom_Elements.addAttribute(element,key,__map_reserved[key] != null?attributes.getReserved(key):attributes.h[key]);
 	}
+	return element;
 };
-vmort_dom_Elements.removeAttribute = function(element,key) {
-	if(key == vmort_dom_VElements.V_CLASSES_KEY) {
-		element.removeAttribute(vmort_dom_Elements.CLASS_NAME_KEY);
-		return;
-	}
-	if(key == vmort_dom_VElements.V_STYLES_KEY) {
-		element.removeAttribute(vmort_dom_Elements.STYLE_KEY);
-		return;
-	}
-	Reflect.deleteField(element,key);
+vmort_dom_Elements.removeAttribute = function(element,name) {
+	if(name == vmort_dom_VElements.V_CLASSES_ATTRIBUTE_NAME) element.removeAttribute(vmort_dom_Elements.CLASS_NAME_ATTRIBUTE_NAME); else if(name == vmort_dom_VElements.V_STYLES_ATTRIBUTE_NAME) element.removeAttribute(vmort_dom_Elements.STYLE_ATTRIBUTE_NAME); else element.removeAttribute(name);
+	return element;
 };
-vmort_dom_Elements.addEvent = function(element,key,eventHandler) {
-	element["on" + key] = eventHandler;
+vmort_dom_Elements.addEvent = function(element,name,eventHandler) {
+	if(!StringTools.startsWith(name,vmort_dom_Elements.EVENT_PREFIX)) name = "" + vmort_dom_Elements.EVENT_PREFIX + name;
+	element[name] = eventHandler;
+	return element;
 };
 vmort_dom_Elements.addEvents = function(element,events) {
 	var $it0 = events.keys();
 	while( $it0.hasNext() ) {
-		var key = $it0.next();
-		var _g = 0;
-		var _g1;
-		_g1 = __map_reserved[key] != null?events.getReserved(key):events.h[key];
-		while(_g < _g1.length) {
-			var handler = _g1[_g];
-			++_g;
-			vmort_dom_Elements.addEvent(element,key,handler);
-		}
+		var name = $it0.next();
+		vmort_dom_Elements.addEvent(element,name,__map_reserved[name] != null?events.getReserved(name):events.h[name]);
 	}
+	return element;
 };
-vmort_dom_Elements.removeEvent = function(element,key) {
-	element.removeAttribute(key);
+vmort_dom_Elements.removeEvent = function(element,name) {
+	if(!StringTools.startsWith(name,vmort_dom_Elements.EVENT_PREFIX)) name = "" + vmort_dom_Elements.EVENT_PREFIX + name;
+	Reflect.deleteField(element,name);
+	return element;
+};
+vmort_dom_Elements.addChild = function(element,vnode) {
+	var child = vmort_dom_VNodes.reify(vnode);
+	element.appendChild(child);
+	return element;
 };
 vmort_dom_Elements.addChildren = function(element,vnodes) {
 	var _g = 0;
 	while(_g < vnodes.length) {
 		var vnode = vnodes[_g];
 		++_g;
-		var node = vmort_dom_VNodes.reify(vnode);
-		element.appendChild(node);
+		vmort_dom_Elements.addChild(element,vnode);
 	}
+	return element;
 };
 var vmort_dom_VDom = function() { };
 vmort_dom_VDom.__name__ = true;
-vmort_dom_VDom.createElement = function(tag,key,$namespace,attributes,events,children) {
-	return new vmort_VElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(tag),vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(key),vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue($namespace),vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(attributes),vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(events),vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(children));
+vmort_dom_VDom.createElement = function(tag,attributes,events,children) {
+	return new vmort_VElement(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(tag),vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(attributes),vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(events),vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(children));
 };
 vmort_dom_VDom.createText = function(text) {
-	return new vmort_VText(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(text));
+	return new vmort_VText(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(text));
 };
 vmort_dom_VDom.updateNode = function(vnodeOld,vnodeNew) {
 	var patch = vmort_Diff.getPatch(vnodeOld,vnodeNew);
 	if(!patch.isPatchable) vmort_dom_VDom.replaceNode(vnodeOld,vnodeNew);
-	if(!patch.hasChanges) {
+	if(!patch.hasChanges()) {
 		vmort__$VNode_VNode_$Impl_$.setRef(vnodeNew,vmort__$VNode_VNode_$Impl_$.getRef(vnodeOld));
 		return;
 	}
@@ -1009,107 +1039,22 @@ vmort_dom_VDom.replaceNode = function(vnodeOld,vnodeNew) {
 	nodeOldParent.removeChild(nodeOld);
 	nodeOldParent.appendChild(nodeNew);
 };
-var vmort_dom_VElements = function() { };
-vmort_dom_VElements.__name__ = true;
-vmort_dom_VElements.reify = function(velement) {
-	var element = window.document.createElement(velement.tag);
-	velement.setRef(element);
-	vmort_dom_Elements.addAttributes(element,velement.attributes);
-	vmort_dom_Elements.addEvents(element,velement.events);
-	vmort_dom_Elements.addChildren(element,velement.children);
-	return element;
+var vmort_util_Strings = function() { };
+vmort_util_Strings.__name__ = true;
+vmort_util_Strings.isEmpty = function(input) {
+	return input == null || input.length == 0;
 };
-vmort_dom_VElements.setId = function(velement,id) {
-	return velement.addAttribute(vmort_dom_VElements.V_ID_KEY,vmort__$Value_Value_$Impl_$.fromString(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(id)));
+vmort_util_Strings.isFull = function(input) {
+	return !vmort_util_Strings.isEmpty(input);
 };
-vmort_dom_VElements.addClass = function(velement,className) {
-	var currentClasses = vmort_dom_VElements.getClasses(velement);
-	var newClasses = vmort_util_Strings.splitTrim(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(className));
-	var _g = 0;
-	while(_g < newClasses.length) {
-		var newClass = newClasses[_g];
-		++_g;
-		if(!vmort_util_Arrays.contains(currentClasses,newClass)) currentClasses.push(newClass);
-	}
-	return velement;
-};
-vmort_dom_VElements.addClasses = function(velement,classNames) {
-	var _g = 0;
-	while(_g < classNames.length) {
-		var className = classNames[_g];
-		++_g;
-		vmort_dom_VElements.addClass(velement,className);
-	}
-	return velement;
-};
-vmort_dom_VElements.addClassIf = function(velement,conditional,classIfTrue,classIfFalse) {
-	if(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return vmort_dom_VElements.addClass(velement,classIfTrue); else if(classIfFalse != null) return vmort_dom_VElements.addClass(velement,classIfFalse); else return velement;
-};
-vmort_dom_VElements.addStyle = function(velement,name,value) {
-	var currentStyles = vmort_dom_VElements.getStyles(velement);
-	var k = vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(name);
-	var v = vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(value);
-	if(__map_reserved[k] != null) currentStyles.setReserved(k,v); else currentStyles.h[k] = v;
-	v;
-	return velement;
-};
-vmort_dom_VElements.addStyles = function(velement,s) {
-	var currentVStyles = vmort_dom_VElements.getStyles(velement);
-	var _g = 0;
-	var _g1 = vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(s);
-	while(_g < _g1.length) {
-		var style = _g1[_g];
-		++_g;
-		var k = vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(style.name);
-		var v = vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(style.value);
-		if(__map_reserved[k] != null) currentVStyles.setReserved(k,v); else currentVStyles.h[k] = v;
-		v;
-	}
-	return velement;
-};
-vmort_dom_VElements.addStyleIf = function(velement,name,conditional,valueIfTrue,valueIfFalse) {
-	if(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(conditional)) return vmort_dom_VElements.addStyle(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(name)),valueIfTrue); else if(valueIfFalse != null) return vmort_dom_VElements.addStyle(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(name)),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(valueIfFalse))); else return velement;
-};
-vmort_dom_VElements.getClasses = function(velement) {
-	if(velement.attributes.get(vmort_dom_VElements.V_CLASSES_KEY) == null) {
-		var v = vmort__$Value_Value_$Impl_$.fromStringArray([]);
-		velement.attributes.set(vmort_dom_VElements.V_CLASSES_KEY,v);
-		v;
-	}
-	return vmort__$Value_Value_$Impl_$.toStringArray(velement.attributes.get(vmort_dom_VElements.V_CLASSES_KEY));
-};
-vmort_dom_VElements.getClassName = function(velement) {
-	return vmort_dom_VElements.getClasses(velement).join(" ");
-};
-vmort_dom_VElements.getStyles = function(velement) {
-	if(velement.attributes.get(vmort_dom_VElements.V_STYLES_KEY) == null) {
-		var v = vmort__$Value_Value_$Impl_$.fromStringMap(new haxe_ds_StringMap());
-		velement.attributes.set(vmort_dom_VElements.V_STYLES_KEY,v);
-		v;
-	}
-	return vmort__$Value_Value_$Impl_$.toStringMap(velement.attributes.get(vmort_dom_VElements.V_STYLES_KEY));
-};
-var vmort_dom_VNodes = function() { };
-vmort_dom_VNodes.__name__ = true;
-vmort_dom_VNodes.reify = function(vnode) {
-	{
-		var _g = vmort__$VNode_VNode_$Impl_$.toVNodeType(vnode);
-		switch(_g[1]) {
-		case 0:
-			var v = _g[2];
-			return vmort_dom_VElements.reify(v);
-		case 1:
-			var v1 = _g[2];
-			return vmort_dom_VTexts.reify(v1);
-		}
-	}
-};
-var vmort_dom_VTexts = function() { };
-vmort_dom_VTexts.__name__ = true;
-vmort_dom_VTexts.reify = function(vtext) {
-	var text = window.document.createTextNode(vtext.text);
-	vtext.setRef(text);
-	return text;
+vmort_util_Strings.trimSplit = function(input,delimiter) {
+	if(delimiter == null) delimiter = " \t";
+	var regex = new EReg(delimiter,"gi");
+	return regex.split(input).map(function(part) {
+		return StringTools.trim(part);
+	}).filter(function(part1) {
+		return vmort_util_Strings.isFull(part1);
+	});
 };
 var vmort_util_Arrays = function() { };
 vmort_util_Arrays.__name__ = true;
@@ -1150,6 +1095,118 @@ vmort_util_Arrays.difference = function(left,right,predicate) {
 vmort_util_Arrays.diff = function(left,right,predicate) {
 	return { left : vmort_util_Arrays.difference(left,right,predicate), both : vmort_util_Arrays.intersection(left,right,predicate), right : vmort_util_Arrays.difference(right,left,predicate)};
 };
+var vmort_util_Objects = function() { };
+vmort_util_Objects.__name__ = true;
+vmort_util_Objects.equals = function(a,b) {
+	return a == b;
+};
+var vmort_dom_VElements = function() { };
+vmort_dom_VElements.__name__ = true;
+vmort_dom_VElements.reify = function(velement) {
+	var element = window.document.createElement(velement.tag);
+	velement.setRef(element);
+	vmort_dom_Elements.addAttributes(element,velement.attributes);
+	vmort_dom_Elements.addEvents(element,velement.events);
+	vmort_dom_Elements.addChildren(element,velement.children);
+	return element;
+};
+vmort_dom_VElements.setId = function(velement,id) {
+	return velement.addAttribute(vmort_dom_VElements.V_ID_ATTRIBUTE_NAME,vmort__$Value_Value_$Impl_$.fromString(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(id)));
+};
+vmort_dom_VElements.addClass = function(velement,className) {
+	var classes = vmort_dom_VElements.getClasses(velement);
+	var newClasses = vmort_util_Strings.trimSplit(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(className));
+	var _g = 0;
+	while(_g < newClasses.length) {
+		var newClass = newClasses[_g];
+		++_g;
+		if(!vmort_util_Arrays.contains(classes,newClass)) classes.push(newClass);
+	}
+	return velement;
+};
+vmort_dom_VElements.addClasses = function(velement,classNames) {
+	var _g = 0;
+	var _g1 = vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(classNames);
+	while(_g < _g1.length) {
+		var className = _g1[_g];
+		++_g;
+		vmort_dom_VElements.addClass(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(className));
+	}
+	return velement;
+};
+vmort_dom_VElements.addClassIf = function(velement,conditional,classIfTrue,classIfFalse) {
+	if(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(conditional)) return vmort_dom_VElements.addClass(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(classIfTrue))); else if(classIfFalse != null) return vmort_dom_VElements.addClass(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(classIfFalse))); else return velement;
+};
+vmort_dom_VElements.addStyle = function(velement,name,value) {
+	var styles = vmort_dom_VElements.getStyles(velement);
+	var k = vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(name);
+	var v = vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(value);
+	if(__map_reserved[k] != null) styles.setReserved(k,v); else styles.h[k] = v;
+	v;
+	return velement;
+};
+vmort_dom_VElements.addStyles = function(velement,styles) {
+	var $it0 = (function($this) {
+		var $r;
+		var this1 = vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(styles);
+		$r = this1.keys();
+		return $r;
+	}(this));
+	while( $it0.hasNext() ) {
+		var name = $it0.next();
+		vmort_dom_VElements.addStyle(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(name),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue((function($this) {
+			var $r;
+			var this2 = vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(styles);
+			$r = this2.get(name);
+			return $r;
+		}(this))));
+	}
+	return velement;
+};
+vmort_dom_VElements.addStyleIf = function(velement,conditional,name,valueIfTrue,valueIfFalse) {
+	if(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(conditional)) return vmort_dom_VElements.addStyle(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(name)),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(valueIfTrue))); else if(valueIfFalse != null) return vmort_dom_VElements.addStyle(velement,vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(name)),vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue(vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(valueIfFalse))); else return velement;
+};
+vmort_dom_VElements.getClasses = function(velement) {
+	if(velement.attributes.get(vmort_dom_VElements.V_CLASSES_ATTRIBUTE_NAME) == null) {
+		var v = vmort__$Value_Value_$Impl_$.fromStringArray([]);
+		velement.attributes.set(vmort_dom_VElements.V_CLASSES_ATTRIBUTE_NAME,v);
+		v;
+	}
+	return vmort__$Value_Value_$Impl_$.toStringArray(velement.attributes.get(vmort_dom_VElements.V_CLASSES_ATTRIBUTE_NAME));
+};
+vmort_dom_VElements.getClassName = function(velement) {
+	return vmort_dom_VElements.getClasses(velement).join(" ");
+};
+vmort_dom_VElements.getStyles = function(velement) {
+	if(velement.attributes.get(vmort_dom_VElements.V_STYLES_ATTRIBUTE_NAME) == null) {
+		var v = vmort__$Value_Value_$Impl_$.fromStringMap(new haxe_ds_StringMap());
+		velement.attributes.set(vmort_dom_VElements.V_STYLES_ATTRIBUTE_NAME,v);
+		v;
+	}
+	return vmort__$Value_Value_$Impl_$.toStringMap(velement.attributes.get(vmort_dom_VElements.V_STYLES_ATTRIBUTE_NAME));
+};
+var vmort_dom_VNodes = function() { };
+vmort_dom_VNodes.__name__ = true;
+vmort_dom_VNodes.reify = function(vnode) {
+	{
+		var _g = vmort__$VNode_VNode_$Impl_$.toVNodeType(vnode);
+		switch(_g[1]) {
+		case 0:
+			var v = _g[2];
+			return vmort_dom_VElements.reify(v);
+		case 1:
+			var v1 = _g[2];
+			return vmort_dom_VTexts.reify(v1);
+		}
+	}
+};
+var vmort_dom_VTexts = function() { };
+vmort_dom_VTexts.__name__ = true;
+vmort_dom_VTexts.reify = function(vtext) {
+	var text = window.document.createTextNode(vtext.text);
+	vtext.setRef(text);
+	return text;
+};
 var vmort_util_Iterators = function() { };
 vmort_util_Iterators.__name__ = true;
 vmort_util_Iterators.toArray = function(i) {
@@ -1167,28 +1224,6 @@ vmort_util_Maps.isEmpty = function(map) {
 };
 vmort_util_Maps.isFull = function(map) {
 	return !vmort_util_Maps.isEmpty(map);
-};
-var vmort_util_Objects = function() { };
-vmort_util_Objects.__name__ = true;
-vmort_util_Objects.equals = function(a,b) {
-	return a == b;
-};
-var vmort_util_Strings = function() { };
-vmort_util_Strings.__name__ = true;
-vmort_util_Strings.isEmpty = function(input) {
-	return input == null || input.length == 0;
-};
-vmort_util_Strings.isFull = function(input) {
-	return !vmort_util_Strings.isEmpty(input);
-};
-vmort_util_Strings.splitTrim = function(input,delimiter) {
-	if(delimiter == null) delimiter = " \t";
-	var regex = new EReg(delimiter,"gi");
-	return regex.split(input).map(function(part) {
-		return StringTools.trim(part);
-	}).filter(function(part1) {
-		return vmort_util_Strings.isFull(part1);
-	});
 };
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -1218,11 +1253,21 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	return a1;
 };
 var __map_reserved = {}
-vmort_dom_Elements.ID_KEY = "id";
-vmort_dom_Elements.CLASS_NAME_KEY = "className";
-vmort_dom_Elements.STYLE_KEY = "style";
-vmort_dom_VElements.V_ID_KEY = "id";
-vmort_dom_VElements.V_CLASSES_KEY = "classes";
-vmort_dom_VElements.V_STYLES_KEY = "styles";
+vmort_VElement.DEFAULT_TAG = "div";
+vmort_VElement.KEY_ATTRIBUTE_NAME = "key";
+vmort_VElement.NAMESPACE_ATTRIBUTE_NAMES = ["ns","namespace"];
+vmort_dom_Elements.ID_ATTRIBUTE_NAME = "id";
+vmort_dom_Elements.CLASS_NAME_ATTRIBUTE_NAME = "className";
+vmort_dom_Elements.STYLE_ATTRIBUTE_NAME = "style";
+vmort_dom_Elements.EVENT_PREFIX = "on";
+vmort_dom_VDom.el = vmort_dom_VDom.createElement;
+vmort_dom_VDom.text = vmort_dom_VDom.createText;
+vmort_dom_VElements.V_ID_ATTRIBUTE_NAME = "id";
+vmort_dom_VElements.V_CLASSES_ATTRIBUTE_NAME = "classes";
+vmort_dom_VElements.V_STYLES_ATTRIBUTE_NAME = "styles";
+vmort_dom_VElements.cls = vmort_dom_VElements.addClass;
+vmort_dom_VElements.clsif = vmort_dom_VElements.addClassIf;
+vmort_dom_VElements.css = vmort_dom_VElements.addStyle;
+vmort_dom_VElements.cssif = vmort_dom_VElements.addStyleIf;
 examples_basic_Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

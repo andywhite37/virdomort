@@ -25,7 +25,7 @@ abstract VNode<TRef>(VNodeType<TRef>) {
   public function toVElement() : VElement<TRef> {
     return switch this {
       case VNElement(v) : v;
-      case VNText(_) : throw new Error("Cannot convert VText to VElement");
+      case _ : throw new Error("Cannot convert VNode to VElement");
     }
   }
 
@@ -33,7 +33,7 @@ abstract VNode<TRef>(VNodeType<TRef>) {
   public function toVText() : VText<TRef> {
     return switch this {
       case VNText(v) : v;
-      case VNElement(_) : throw new Error("Cannot convert VElement to VText");
+      case _ : throw new Error("Cannot convert VNode to VText");
     }
   }
 

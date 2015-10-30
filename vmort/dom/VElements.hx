@@ -8,9 +8,9 @@ using vmort.util.Arrays;
 using vmort.util.Strings;
 
 class VElements {
-  public static var V_ID_KEY(default, never) = "id";
-  public static var V_CLASSES_KEY(default, never) = "classes";
-  public static var V_STYLES_KEY(default, never) = "styles";
+  public static var V_ID_ATTRIBUTE_NAME(default, never) = "id";
+  public static var V_CLASSES_ATTRIBUTE_NAME(default, never) = "classes";
+  public static var V_STYLES_ATTRIBUTE_NAME(default, never) = "styles";
 
   public static function reify(velement : VElement<Node>) : Element {
     var element : Element = cast Browser.document.createElement(velement.tag);
@@ -21,65 +21,71 @@ class VElements {
     return element;
   }
 
-  public static function setId(velement : VElement<Node>, id : ValOrFunc<String>) {
-    return velement.addAttribute(V_ID_KEY, id.getValue());
+  public static function setId(velement : VElement<Node>, id : ValOrFunc<String>) : VElement<Node> {
+    return velement.addAttribute(V_ID_ATTRIBUTE_NAME, id.toValue());
   }
 
-  public static function addClass(velement : VElement<Node>, className : ValOrFunc<String>) {
-    var currentClasses = getClasses(velement);
-    var newClasses = className.getValue().splitTrim();
+  public static function addClass(velement : VElement<Node>, className : ValOrFunc<String>) : VElement<Node> {
+    var classes = getClasses(velement);
+    var newClasses = className.toValue().trimSplit();
     for (newClass in newClasses) {
-      if (!currentClasses.contains(newClass)) {
-        currentClasses.push(newClass);
+      if (!classes.contains(newClass)) {
+        classes.push(newClass);
       }
     }
     return velement;
   }
+  public static var cls(default, never) = addClass;
 
-  public static function addClasses(velement : VElement<Node>, classNames : Array<ValOrFunc<String>>) {
-    for (className in classNames) {
+  public static function addClasses(velement : VElement<Node>, classNames : ValOrFunc<Array<String>>) : VElement<Node> {
+    for (className in classNames.toValue()) {
       addClass(velement, className);
     }
     return velement;
   }
 
-  public static function addClassIf(velement : VElement<Node>, conditional : ValOrFunc<Bool>, classIfTrue : ValOrFunc<String>, ?classIfFalse : ValOrFunc<String>) : VElement<Node> {
-    return if (conditional.getValue()) {
-      addClass(velement, classIfTrue);
-    } else {
-      if (classIfFalse != null) {
-        addClass(velement, classIfFalse);
-      } else {
-        velement;
-      }
-    }
-  }
-
-  public static function addStyle(velement : VElement<Node>, name : ValOrFunc<String>, value : ValOrFunc<String>) {
-    var currentStyles = getStyles(velement);
-    currentStyles[name.getValue()] = value.getValue();
-    return velement;
-  }
-
-  public static function addStyles(velement : VElement<Node>, s : ValOrFunc<Array<{ name: ValOrFunc<String>, value: ValOrFunc<String> }>>) {
-    var currentVStyles = getStyles(velement);
-    for (style in s.getValue()) {
-      currentVStyles[style.name.getValue()] = style.value.getValue();
-    }
-    return velement;
-  }
-
-  public static function addStyleIf(velement : VElement<Node>, name : ValOrFunc<String>, conditional : ValOrFunc<Bool>, valueIfTrue : ValOrFunc<String>, ?valueIfFalse : ValOrFunc<String>) : VElement<Node> {
-    return if (conditional.getValue()) addStyle(velement, name.getValue(), valueIfTrue);
-      else if (valueIfFalse != null) addStyle(velement, name.getValue(), valueIfFalse.getValue());
+  public static function addClassIf(
+      velement : VElement<Node>,
+      conditional : ValOrFunc<Bool>,
+      classIfTrue : ValOrFunc<String>,
+      ?classIfFalse : ValOrFunc<String>) : VElement<Node> {
+    return if (conditional.toValue()) addClass(velement, classIfTrue.toValue());
+      else if (classIfFalse != null) addClass(velement, classIfFalse.toValue());
       else velement;
   }
+  public static var clsif(default, never) = addClassIf;
+
+  public static function addStyle(velement : VElement<Node>, name : ValOrFunc<String>, value : ValOrFunc<String>) : VElement<Node> {
+    var styles = getStyles(velement);
+    styles[name.toValue()] = value.toValue();
+    return velement;
+  }
+  public static var css(default, never) = addStyle;
+
+  public static function addStyles(velement : VElement<Node>, styles : ValOrFunc<Map<String, String>>) : VElement<Node> {
+    for (name in styles.toValue().keys()) {
+      addStyle(velement, name, styles.toValue()[name]);
+    }
+    return velement;
+  }
+
+  public static function addStyleIf(
+      velement : VElement<Node>,
+      conditional : ValOrFunc<Bool>,
+      name : ValOrFunc<String>,
+      valueIfTrue : ValOrFunc<String>,
+      ?valueIfFalse : ValOrFunc<String>) : VElement<Node> {
+    return if (conditional.toValue()) addStyle(velement, name.toValue(), valueIfTrue.toValue());
+      else if (valueIfFalse != null) addStyle(velement, name.toValue(), valueIfFalse.toValue());
+      else velement;
+  }
+  public static var cssif(default, never) = addStyleIf;
 
   static function getClasses(velement : VElement<Node>) : Array<String> {
-    if (velement.attributes[V_CLASSES_KEY] == null) {
-      velement.attributes[V_CLASSES_KEY] = new Array<String>();
+    if (velement.attributes[V_CLASSES_ATTRIBUTE_NAME] == null) {
+      velement.attributes[V_CLASSES_ATTRIBUTE_NAME] = new Array<String>();
     }
-    return velement.attributes[V_CLASSES_KEY].toStringArray();
+    return velement.attributes[V_CLASSES_ATTRIBUTE_NAME].toStringArray();
   }
 
   static function getClassName(velement : VElement<Node>) : String {
@@ -87,9 +93,9 @@ class VElements {
   }
 
   static function getStyles(velement : VElement<Node>) : Map<String, String> {
-    if (velement.attributes[V_STYLES_KEY] == null) {
-      velement.attributes[V_STYLES_KEY] = new Map<String, String>();
+    if (velement.attributes[V_STYLES_ATTRIBUTE_NAME] == null) {
+      velement.attributes[V_STYLES_ATTRIBUTE_NAME] = new Map<String, String>();
     }
-    return velement.attributes[V_STYLES_KEY].toStringMap();
+    return velement.attributes[V_STYLES_ATTRIBUTE_NAME].toStringMap();
   }
 }

@@ -827,13 +827,13 @@ test_vmort_ValOrFuncTest.__name__ = ["test","vmort","ValOrFuncTest"];
 test_vmort_ValOrFuncTest.prototype = {
 	testVal: function() {
 		var test1 = vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue("test");
-		utest_Assert.same("test",vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(test1),null,null,{ fileName : "ValOrFuncTest.hx", lineNumber : 11, className : "test.vmort.ValOrFuncTest", methodName : "testVal"});
+		utest_Assert.same("test",vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(test1),null,null,{ fileName : "ValOrFuncTest.hx", lineNumber : 11, className : "test.vmort.ValOrFuncTest", methodName : "testVal"});
 	}
 	,testFunc: function() {
 		var test1 = vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromFunc(function() {
 			return "test";
 		});
-		utest_Assert.same("test",vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue(test1),null,null,{ fileName : "ValOrFuncTest.hx", lineNumber : 18, className : "test.vmort.ValOrFuncTest", methodName : "testFunc"});
+		utest_Assert.same("test",vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue(test1),null,null,{ fileName : "ValOrFuncTest.hx", lineNumber : 18, className : "test.vmort.ValOrFuncTest", methodName : "testFunc"});
 	}
 	,__class__: test_vmort_ValOrFuncTest
 };
@@ -2740,23 +2740,24 @@ utest_ui_text_PrintReport.prototype = $extend(utest_ui_text_PlainTextReport.prot
 	}
 	,__class__: utest_ui_text_PrintReport
 });
-var vmort_ValOrFuncEnum = { __ename__ : ["vmort","ValOrFuncEnum"], __constructs__ : ["Value","Func"] };
-vmort_ValOrFuncEnum.Value = function(v) { var $x = ["Value",0,v]; $x.__enum__ = vmort_ValOrFuncEnum; $x.toString = $estr; return $x; };
-vmort_ValOrFuncEnum.Func = function(v) { var $x = ["Func",1,v]; $x.__enum__ = vmort_ValOrFuncEnum; $x.toString = $estr; return $x; };
+var vmort_ValOrFuncType = { __ename__ : ["vmort","ValOrFuncType"], __constructs__ : ["Value","Func"] };
+vmort_ValOrFuncType.Value = function(v) { var $x = ["Value",0,v]; $x.__enum__ = vmort_ValOrFuncType; $x.toString = $estr; return $x; };
+vmort_ValOrFuncType.Func = function(v) { var $x = ["Func",1,v]; $x.__enum__ = vmort_ValOrFuncType; $x.toString = $estr; return $x; };
 var vmort__$ValOrFunc_ValOrFunc_$Impl_$ = {};
 vmort__$ValOrFunc_ValOrFunc_$Impl_$.__name__ = ["vmort","_ValOrFunc","ValOrFunc_Impl_"];
 vmort__$ValOrFunc_ValOrFunc_$Impl_$._new = function(valOrFunc) {
 	return valOrFunc;
 };
+vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValOrFuncType = function(v) {
+	return v;
+};
 vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValue = function(v) {
-	var valOrFunc = vmort_ValOrFuncEnum.Value(v);
-	return valOrFunc;
+	return vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValOrFuncType(vmort_ValOrFuncType.Value(v));
 };
 vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromFunc = function(v) {
-	var valOrFunc = vmort_ValOrFuncEnum.Func(v);
-	return valOrFunc;
+	return vmort__$ValOrFunc_ValOrFunc_$Impl_$.fromValOrFuncType(vmort_ValOrFuncType.Func(v));
 };
-vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue = function(this1) {
+vmort__$ValOrFunc_ValOrFunc_$Impl_$.toValue = function(this1) {
 	if(this1 == null) return null;
 	switch(this1[1]) {
 	case 0:
@@ -2765,6 +2766,19 @@ vmort__$ValOrFunc_ValOrFunc_$Impl_$.getValue = function(this1) {
 	case 1:
 		var f = this1[2];
 		return f();
+	}
+};
+vmort__$ValOrFunc_ValOrFunc_$Impl_$.toFunc = function(this1) {
+	if(this1 == null) return null;
+	switch(this1[1]) {
+	case 0:
+		var v = this1[2];
+		return function() {
+			return v;
+		};
+	case 1:
+		var f = this1[2];
+		return f;
 	}
 };
 var vmort_util_Arrays = function() { };

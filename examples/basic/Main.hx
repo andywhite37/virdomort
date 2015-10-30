@@ -11,32 +11,43 @@ class Main {
   }
 
   public static function main() : Void {
-    var myString = "Hello";
+    var rootElement = Browser.document.getElementById("root");
 
-    var onClick = function(e : MouseEvent) {
-      e.preventDefault();
-      trace("click");
-    };
-
-    var vnode = createElement("div")
-      .addClass("test-class test-class-1 test-class-2")
-      .addClassIf(true, "class-true-1")
-      .addClassIf(false, "class-true-2", "class-false-2")
-      .addChildren([
-        createText("Some text"),
-        createElement("span").addStyle("color", "blue").addChild("My span text"),
-        createElement("br"),
-        createElement("span").addStyleIf("background-color", true, "#ddd").addChild("My span 2 text"),
-        createElement("br"),
+    var vnode1 = el("div")
+      .cls("test-class test-class-1 test-class-2")
+      .clsif(true, "class-true-1")
+      .clsif(false, "class-true-2", "class-false-2")
+      .append([
+        text("Some text"),
+        el("span").css("color", "blue").child("My span text"),
+        el("br"),
+        el("span").cssif(true, "background-color", "#ddd").child(el("input")),
+        el("br"),
         "Hello, world!",
-        createElement("hr"),
-        createElement("button").addEvent("click", onClick).addChild("Click me")
+        el("hr"),
+        el("button").on("click", onClick).child("Click me")
       ]);
 
-    trace(vnode);
+    trace(vnode1);
 
-    var root = Browser.document.getElementById("root");
-    var node = vnode.reify();
-    root.appendChild(node);
+    var node1 = vnode1.reify();
+
+    var vnode2 = el("div")
+      .append([
+        "My text content",
+        el("span")
+          .append([
+            el("input")
+          ])
+      ]);
+
+    var node2 = vnode2.reify();
+
+    rootElement.appendChild(node1);
+    rootElement.appendChild(node2);
+  }
+
+  static function onClick(e : MouseEvent) {
+    trace("click");
   }
 }

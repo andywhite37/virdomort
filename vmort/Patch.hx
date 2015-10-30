@@ -7,8 +7,6 @@ using vmort.util.Maps;
 @:allow(Diff)
 class Patch<TRef> {
   public var isPatchable : Bool = false;
-  public var hasChanges : Bool = false;
-  // TODO: VNodeType rather than isVText/isVElement
   public var isVText : Bool = false;
   public var isVElement : Bool = false;
 
@@ -38,6 +36,16 @@ class Patch<TRef> {
   public function hasRemovedChildren() : Bool return removedChildren.isFull();
   public function hasMovedChildren() : Bool return movedChildren.isFull();
   public function hasChildrenDiffs() : Bool return hasAddedChildren() || hasRemovedChildren() || hasMovedChildren();
+
+  public function hasChanges() : Bool {
+    return if (isVText) {
+      hasChangedText();
+    } else if (isVElement) {
+      hasAttributeDiffs() || hasEventDiffs() || hasChildrenDiffs();
+    } else {
+      false;
+    }
+  }
 
   public function new() {
   }

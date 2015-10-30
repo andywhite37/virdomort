@@ -19,7 +19,6 @@ class Diff {
 
   static function fillVTextPatch<TRef>(vold : VText<TRef>, vnew : VText<TRef>, patch : Patch<TRef>) : Patch<TRef> {
     patch.isPatchable = true;
-    patch.hasChanges = vold.text != vnew.text;
     patch.changedText = vnew.text;
     return patch;
   }

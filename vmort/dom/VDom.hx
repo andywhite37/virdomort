@@ -16,17 +16,17 @@ using vmort.dom.VNodes;
 class VDom {
   public static function createElement(
     ?tag : ValOrFunc<String>,
-    ?key : ValOrFunc<String>,
-    ?namespace : ValOrFunc<String>,
     ?attributes : ValOrFunc<Map<String, Value>>,
-    ?events : ValOrFunc<Map<String, Array<EventHandler>>>,
+    ?events : ValOrFunc<Map<String, EventHandler>>,
     ?children : ValOrFunc<Array<VNode<Node>>>) : VElement<Node> {
-    return new VElement<Node>(tag.getValue(), key.getValue(), namespace.getValue(), attributes.getValue(), events.getValue(), children.getValue());
+    return new VElement<Node>(tag.toValue(), attributes.toValue(), events.toValue(), children.toValue());
   }
+  public static var el(default, never) = createElement;
 
   public static function createText(text : ValOrFunc<String>) : VText<Node> {
-    return new VText<Node>(text.getValue());
+    return new VText<Node>(text.toValue());
   }
+  public static var text(default, never) = createText;
 
   public static function updateNode(vnodeOld : VNode<Node>, vnodeNew : VNode<Node>) : Void {
     var patch = Diff.getPatch(vnodeOld, vnodeNew);
@@ -36,7 +36,7 @@ class VDom {
       replaceNode(vnodeOld, vnodeNew);
     }
 
-    if (!patch.hasChanges) {
+    if (!patch.hasChanges()) {
       // Nothing to do, just copy the ref over
       vnodeNew.setRef(vnodeOld.getRef());
       return;

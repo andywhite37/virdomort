@@ -2,7 +2,7 @@ package vmort;
 
 import js.Error;
 
-enum ValueEnum {
+enum ValueType {
   VInt(v : Int);
   VFloat(v : Float);
   VBool(v : Bool);
@@ -13,10 +13,10 @@ enum ValueEnum {
   VNone;
 }
 
-abstract Value(ValueEnum) {
-  public function new(ve : ValueEnum) this = ve;
+abstract Value(ValueType) {
+  public function new(ve : ValueType) this = ve;
 
-  @:from public static function fromValueEnum(ve : ValueEnum) : Value return new Value(ve);
+  @:from public static function fromValueType(ve : ValueType) : Value return new Value(ve);
   @:from public static function fromInt(v : Int) : Value return VInt(v);
   @:from public static function fromFloat(v : Float) : Value return VFloat(v);
   @:from public static function fromBool(v : Bool) : Value return VBool(v);
@@ -26,7 +26,7 @@ abstract Value(ValueEnum) {
   @:from public static function fromStringMap(v : Map<String, String>) : Value return VStringMap(v);
 
   @:to
-  public function toValueEnum() : ValueEnum {
+  public function toValueType() : ValueType {
     return this;
   }
 
